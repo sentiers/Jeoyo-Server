@@ -1,0 +1,23 @@
+{
+  "name": "jeoyo-server",
+  "version": "1.0.0",
+  "description": "jeoyo-app backend part",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jeoyo-App/Jeoyo-Server.git"
+  },
+  "author": "Hyunji Cho",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jeoyo-App/Jeoyo-Server/issues"
+  },
+  "homepage": "https://github.com/Jeoyo-App/Jeoyo-Server#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

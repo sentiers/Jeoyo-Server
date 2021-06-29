@@ -19,5 +19,9 @@
   "homepage": "https://github.com/Jeoyo-App/Jeoyo-Server#readme",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "engines": {
+    "node": "14.17.0",
+    "npm": "6.14.13"
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "jeoyo-server",
   "version": "1.0.0",
-  "description": "jeoyo-app backend part",
+  "description": "2021 Jeoyo app",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

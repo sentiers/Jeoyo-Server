@@ -1,19 +1,25 @@
 //https://fierce-mesa-76163.herokuapp.com/
 
-var HTTP_PORT = process.env.PORT || 8080;
+
+//====DEPENDENCIES =========================================
 var express = require("express");
 var path = require("path");
 var app = express();
 
-function onHttpStart() {
-  console.log("Express http server listening on " + HTTP_PORT);
-}
 
-// setup a 'route' to listen on the default url path
-app.get("/", function (req, res) {
-  res.send("hi");
-});
+//====ROUTES=================================================
+var root = require(__dirname + '/app/routes/root')
 
-// setup http server to listen on HTTP_PORT`
-app.listen(HTTP_PORT, onHttpStart);
+//====MONGOOOSE AND MONGOD==========================================
 
+
+//====CONFIGURATION OF EXPRESS AND PASSPORT======================
+app.use(express.static(path.join(__dirname,'app')));
+
+//====ROUTING=====================================================
+app.use('/', root);
+
+
+//====LISTEN TO THE SERVER =======================================
+app.listen(process.env.PORT || 8080,
+  () => console.log('started server at localhost:8080'));

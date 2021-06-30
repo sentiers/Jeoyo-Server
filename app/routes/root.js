@@ -7,7 +7,7 @@ var  router= require('express').Router();
 
 //====DISPLAY ===================================================
 router.get('/hi', function(req, res, next){
-    res.send("hi");
+    res.send("hello everyone");
 });
 
 module.exports = router;

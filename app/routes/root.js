@@ -6,7 +6,7 @@
 var  router= require('express').Router();
 
 //====DISPLAY ===================================================
-router.get('/', function(req, res, next){
+router.get('/hi', function(req, res, next){
     res.send("hi");
 });
 

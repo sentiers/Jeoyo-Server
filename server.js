@@ -19,7 +19,7 @@ var explore = require(__dirname + '/app/routes/menu-explore');
 var home = require(__dirname + '/app/routes/menu-home');
 var mypage = require(__dirname + '/app/routes/menu-mypage');
 
-//====MONGOOOSE AND MONGOD==========================================
+//====MONGOOOSE AND MONGOD=======================================
 var url = 'mongodb+srv://dbUser:2021JeoyoApp@jeoyocluster.evzle.mongodb.net/JeoyoDatabase?retryWrites=true&w=majority';
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
 

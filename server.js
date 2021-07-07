@@ -43,9 +43,7 @@ app.use(passport.session());
 //====ROUTING===============================================
 app.use('/', root);
 //app.use('/auth', auth(passport));
-app.get('/auth', function(req, res){
-  res.redirect('/');
-});
+app.use('/auth', auth);
 app.use('/chat', chat);
 app.use('/post', post);
 app.use('/explore', explore);

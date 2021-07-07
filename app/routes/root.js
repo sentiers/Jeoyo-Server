@@ -1,10 +1,10 @@
-//====HANDLE ROOT PAGE ROUTES =============
+//====HANDLE ROOT ROUTES =============
 var  router= require('express').Router();
 
-//====DISPLAY ===================================================
+//====DISPLAY =============================
  // 테스팅 용도
 router.get('/', function(req, res, next){
-    res.send("hello everyone");
+    res.send("hello root");
 });
 
 module.exports = router;

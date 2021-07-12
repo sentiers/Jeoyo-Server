@@ -28,8 +28,6 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCrea
 app.use(express.static(path.join(__dirname, 'app')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // maybe false
-
-// requires modification
 app.use(session({
   secret: '2021jeoyoapp2021',
   cookie: {
@@ -44,7 +42,6 @@ require(path.join(__dirname, 'app', 'config', 'strategies'))(passport);
 
 //====ROUTING===============================================
 app.use('/', root);
-//app.use('/auth', auth(passport));
 app.use('/auth', auth);
 app.use('/chat', chat);
 app.use('/post', post);

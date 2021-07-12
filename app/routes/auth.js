@@ -1,7 +1,7 @@
 //====HANDLE AUTHORIZATION ROUTES ============================
 var router = require('express').Router();
+var UserData = require('../models/userData');
 var User = require('../models/user');
-var UserAccount = require('../models/userAccount');
 
 //====UTILITY FUNCTIONS========================================
 
@@ -12,15 +12,15 @@ var UserAccount = require('../models/userAccount');
 //==== 유저 등록 =========================
 function registerUser(data) {
     return new Promise(function (resolve, reject) {
-        var newUserAccount = new UserAccount();
-        newUserAccount.user_email = data.user_email;
+        var newUser = new User();
+        newUser.user_email = data.user_email;
         bcrypt.genSalt(10, function (err, salt) {
             bcrypt.hash(data.user_password, salt, function (err, hash) {
                 if (err) {
                     reject("에러: " + err);
                 } else {
-                    newUserAccount.user_password = hash;
-                    newUserAccount.save((err) => {
+                    newUser.user_password = hash;
+                    newUser.save((err) => {
                         if (err) {
                             if (err.code == 11000) {
                                 reject("에러: 해당 이메일은 사용중입니다");
@@ -28,14 +28,14 @@ function registerUser(data) {
                                 reject("에러: " + err);
                             }
                         } else {
-                            var newUser = new User();
-                            newUser.user_name = data.user_name;
-                            newUser.user_email = data.user_email;
-                            newUser.save((err) => {
+                            var newUserData = new UserData();
+                            newUserData.user_name = data.user_name;
+                            newUserData.user_email = data.user_email;
+                            newUserData.save((err) => {
                                 if (err) {
                                     reject("에러: " + err);
                                 } else {
-                                    resolve();
+                                    resolve("성공: 유저 등록");
                                 }
                             });
                         }
@@ -53,8 +53,7 @@ function surveyUser() {
 
 }
 
-//====GET REQUESTS============================================
-//=====POST REQUESTS==========================================
+
 
 //====테스팅 용도 =========================
 router.get('/', function (req, res, next) {
@@ -63,7 +62,12 @@ router.get('/', function (req, res, next) {
 
 //====회원가입 ============================
 router.post('/register', function (req, res, next) {
-    res.send("registering");
+    registerUser(req.body)
+        .then((msg) => {
+            console.log(msg);
+        }).catch((err) => {
+            res.send(err);
+        });
 });
 
 //====설문조사 =============================
@@ -88,11 +92,11 @@ router.post('/update', function (req, res, next) {
 
 //====로그아웃 =============================
 router.get('/logout', function (req, res, next) {
-    res.send("logout");
+    req.logout();
 });
 
 //====google 계정으로 로그인 =================
-router.get('/', function (req, res, next) {
+router.get('/google', function (req, res, next) {
 
 });
 

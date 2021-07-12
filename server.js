@@ -20,25 +20,27 @@ var mypage = require(__dirname + '/app/routes/menu-mypage');
 
 //====MONGOOOSE AND MONGOD==================================
 var url = 'mongodb+srv://dbUser:2021JeoyoApp@jeoyocluster.evzle.mongodb.net/JeoyoDatabase?retryWrites=true&w=majority';
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+  .then(() => console.log('MongoDB Connected...'))
+  .catch((err) => console.log(err));
 
 //====CONFIGURATION OF EXPRESS AND PASSPORT=================
 app.use(express.static(path.join(__dirname, 'app')));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true })); // maybe false
 
 // requires modification
 app.use(session({
   secret: '2021jeoyoapp2021',
-  cookie:{
-    maxAge: 1000*60*60*24*5
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 5
   },
-  resave: false,
-  saveUninitialized: false
+  resave: false, // maybe true
+  saveUninitialized: false // maybe true
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-//require(path.join(__dirname, 'app', 'config', 'strategies'))(passport);
+require(path.join(__dirname, 'app', 'config', 'strategies'))(passport);
 
 //====ROUTING===============================================
 app.use('/', root);
@@ -52,4 +54,4 @@ app.use('/mypage', mypage);
 
 //====LISTEN TO THE SERVER =================================
 app.listen(process.env.PORT || 8080,
-  () => console.log('started server at localhost:8080'));
+  () => console.log('Started server at localhost:8080'));

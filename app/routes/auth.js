@@ -1,21 +1,57 @@
 //====HANDLE AUTHORIZATION ROUTES ============================
 var router = require('express').Router();
-var User   = require('../models/user');
-var UserAccount   = require('../models/userAccount');
-
+var User = require('../models/user');
+var UserAccount = require('../models/userAccount');
 
 //====UTILITY FUNCTIONS========================================
 
-//====유저 등록 =========================
-function registerUser(){
+//==== 메일 인증 =========================
+// 일단 나중에
+
+
+//==== 유저 등록 =========================
+function registerUser(data) {
+    return new Promise(function (resolve, reject) {
+        var newUserAccount = new UserAccount();
+        newUserAccount.user_email = data.user_email;
+        bcrypt.genSalt(10, function (err, salt) {
+            bcrypt.hash(data.user_password, salt, function (err, hash) {
+                if (err) {
+                    reject("에러: " + err);
+                } else {
+                    newUserAccount.user_password = hash;
+                    newUserAccount.save((err) => {
+                        if (err) {
+                            if (err.code == 11000) {
+                                reject("에러: 해당 이메일은 사용중입니다");
+                            } else {
+                                reject("에러: " + err);
+                            }
+                        } else {
+                            var newUser = new User();
+                            newUser.user_name = data.user_name;
+                            newUser.user_email = data.user_email;
+                            newUser.save((err) => {
+                                if (err) {
+                                    reject("에러: " + err);
+                                } else {
+                                    resolve();
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+};
+
+//==== 유저 설문조사 =========================
+function surveyUser() {
+
+
 
 }
-
-//====유저 확인 =========================
-function checkUser(){
-
-}
-
 
 //====GET REQUESTS============================================
 //=====POST REQUESTS==========================================
@@ -42,7 +78,7 @@ router.post('/find', function (req, res, next) {
 
 //====로그인 =============================
 router.post('/login', function (req, res, next) {
-    res.send("login");
+    passport.authenticate('local')(req, res, next);
 });
 
 //====비밀번호 변경 =============================

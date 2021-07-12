@@ -6,7 +6,10 @@ var userSchema = new Schema({
     user_img: String, // 프로필이미지
     user_img_back: String, // 프로필배경이미지
     user_name: String, // 이름
-    user_gender: Number, // 성별
+    user_gender: { // 성별 (0:선택사항없음 1:남자 2:여자)
+        type: Number,
+        default: 0
+    },
     user_education: String, // 학교
     user_major: String, // 전공
     user_location: [], // 위치
@@ -21,12 +24,21 @@ var userSchema = new Schema({
         hardworker: Number, // 성실하고 열정적이에요
         competent: Number // 기대이상의 퍼포먼스를 보여줘요
     },
-    user_cmt_posts:[], // 내가 쓴 댓글
+    user_cmt_posts: [], // 내가 쓴 댓글
     user_posts: [], // 내가 쓴 모집글
     user_projects: [], // 나의 프로젝트
-    likedUsers: [], // 관심팀원
-    likedPosts: [], // 관심 프로젝트
-    selection: [] // 설문조사 결과
+    user_likedUsers: [], // 관심팀원
+    user_likedPosts: [], // 관심 프로젝트
+    user_selection: [], // 설문조사 결과
+    user_agreement: {
+        agreement_m: { // (필수) 이용약관 동의여부 (0:비동의 1:동의)
+            type: Number,
+            default: 0
+        },
+        info_m: Number, // (필수) 개인정보
+        info_c: Number, // (선택) 개인정보
+        marketing_c: Number, // (선택) 마케팅
+    }
 });
 
 var User = mongoose.model('Users', userSchema);

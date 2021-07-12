@@ -64,6 +64,7 @@ router.get('/', function (req, res, next) {
 router.post('/register', function (req, res, next) {
     registerUser(req.body)
         .then((msg) => {
+            res.send(msg);
             console.log(msg);
         }).catch((err) => {
             res.send(err);

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var userAccountScheme = new Schema({
+var userAccountSchema = new Schema({
     local: {
         id: String,
         name: String,
@@ -16,5 +16,5 @@ var userAccountScheme = new Schema({
     user_password: String // 비밀번호
 });
 
-var UserAccount = mongoose.model('UserAccounts', userAccountScheme);
+var UserAccount = mongoose.model('UserAccounts', userAccountSchema);
 module.exports = UserAccount;

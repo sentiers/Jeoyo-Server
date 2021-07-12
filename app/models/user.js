@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var userScheme = new Schema({
+var userSchema = new Schema({
     //user_id: String,
     user_img: String, // 프로필이미지
     user_img_back: String, // 프로필배경이미지
@@ -10,7 +10,7 @@ var userScheme = new Schema({
     user_education: String, // 학교
     user_major: String, // 전공
     user_location: [], // 위치
-    user_division: [], // 관심분야
+    user_field: [], // 관심분야
     user_email: String, // 이메일
     user_introduction: String, // 소개
     user_history: [], // 활동 이력
@@ -29,5 +29,5 @@ var userScheme = new Schema({
     selection: [] // 설문조사 결과
 });
 
-var User = mongoose.model('Users', userScheme);
+var User = mongoose.model('Users', userSchema);
 module.exports = User;

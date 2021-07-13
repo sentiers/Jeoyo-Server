@@ -27,7 +27,7 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCrea
 //====CONFIGURATION OF EXPRESS AND PASSPORT=================
 app.use(express.static(path.join(__dirname, 'app')));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(session({
   secret: '2021jeoyoapp2021',
   cookie: {

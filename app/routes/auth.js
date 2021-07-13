@@ -57,11 +57,12 @@ function surveyUser() {
 
 //====테스팅 용도 =========================
 router.get('/', function (req, res, next) {
-    res.send("hello auth");
+    res.send("로그인실패/로그아웃");
 });
 
 //====회원가입 ============================
 router.post('/register', function (req, res, next) {
+    console.log(req.body);
     registerUser(req.body)
         .then((msg) => {
             res.send(msg);
@@ -71,7 +72,8 @@ router.post('/register', function (req, res, next) {
 });
 
 //====설문조사 =============================
-router.post('/survey', function (req, res, next) {
+router.get('/survey', function (req, res, next) {
+    console.log(req.session);
     res.send("surveying");
 });
 
@@ -95,7 +97,8 @@ router.post('/update', function (req, res, next) {
 
 //====로그아웃 =============================
 router.get('/logout', function (req, res, next) {
-    req.logout().then(console.log("로그아웃"));
+    req.logout();
+    res.send("성공: 로그아웃");
 });
 
 //====google 계정으로 로그인 =================

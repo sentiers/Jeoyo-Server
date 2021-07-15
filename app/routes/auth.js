@@ -56,7 +56,14 @@ function surveyUser(email, data) {
                     'user_agreement.agreement_m': data.user_agreement.agreement_m,
                     'user_agreement.info_m': data.user_agreement.info_m,
                     'user_agreement.info_c': data.user_agreement.info_c,
-                    'user_agreement.marketing_c': data.user_agreement.marketing_c
+                    'user_agreement.marketing_c': data.user_agreement.marketing_c,
+                    'user_location': data.user_location,
+                    'user_field': data.user_field,
+                    'user_selection.q1': data.user_selection.q1,
+                    'user_selection.q2': data.user_selection.q2,
+                    'user_selection.q3': data.user_selection.q3,
+                    'user_selection.q4': data.user_selection.q4,
+                    'user_selection.q5': data.user_selection.q5,
                 }
             }
         ).then(() => {

@@ -10,6 +10,5 @@ var CommentSchema = new Schema({
     comment_created_at: Date
 });
 
-
 var Comment = mongoose.model('Comments', CommentSchema);
 module.exports = Comment;

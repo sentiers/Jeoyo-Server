@@ -57,7 +57,7 @@ function surveyUser() {
 
 //====테스팅 용도 =========================
 router.get('/', function (req, res, next) {
-    res.send("로그인실패/로그아웃");
+    res.send("hello auth");
 });
 
 //====회원가입 ============================
@@ -86,7 +86,7 @@ router.post('/find', function (req, res, next) {
 router.post('/login', function (req, res, next) {
     passport.authenticate('local', {
         successRedirect: '/',
-        failureRedirect: '/auth',
+        failureRedirect: '/401',
     })(req, res, next);
 });
 

@@ -20,14 +20,14 @@ var mypage = require(__dirname + '/app/routes/menu-mypage');
 
 //====MONGOOOSE AND MONGOD==================================
 var url = 'mongodb+srv://dbUser:2021JeoyoApp@jeoyocluster.evzle.mongodb.net/JeoyoDatabase?retryWrites=true&w=majority';
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false })
   .then(() => console.log('MongoDB Connected...'))
   .catch((err) => console.log(err));
 
 //====CONFIGURATION OF EXPRESS AND PASSPORT=================
 app.use(express.static(path.join(__dirname, 'app')));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
   secret: '2021jeoyoapp2021',
   cookie: {

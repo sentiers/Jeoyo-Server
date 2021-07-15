@@ -47,22 +47,50 @@ function registerUser(data) {
 };
 
 //==== 유저 설문조사 =========================
-function surveyUser() {
+function surveyUser(email, data) {
+    return new Promise(function (resolve, reject) {
+        UserData.updateOne(
+            { user_email: email },
+            {
+                $set: {
+                    'user_agreement.agreement_m': data.user_agreement.agreement_m,
+                    'user_agreement.info_m': data.user_agreement.info_m,
+                    'user_agreement.info_c': data.user_agreement.info_c,
+                    'user_agreement.marketing_c': data.user_agreement.marketing_c
+                }
+            }
+        ).then(() => {
+            resolve("설문조사 완료");
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+};
 
+//==== 최초 로그인인가 =========================
+function isFirstLogin(email) {
+    return new Promise(function (resolve, reject) {
+        UserData.findOne({
+            user_email: email
+        }).then(user => {
+            var msg = "환영합니다 " + user.user_name + "님";
+            if (user.user_agreement.agreement_m == 0) {
+                msg = "firstLogin";
+            }
+            resolve(msg);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+};
 
-
-}
-
-
-
-//====테스팅 용도 =========================
+//==== 테스팅  ====
 router.get('/', function (req, res, next) {
-    res.send("hello auth");
+
 });
 
 //====회원가입 ============================
 router.post('/register', function (req, res, next) {
-    console.log(req.body);
     registerUser(req.body)
         .then((msg) => {
             res.send(msg);
@@ -72,9 +100,13 @@ router.post('/register', function (req, res, next) {
 });
 
 //====설문조사 =============================
-router.get('/survey', function (req, res, next) {
-    console.log(req.session);
-    res.send("surveying");
+router.post('/survey', function (req, res, next) {
+    surveyUser(req.session.passport.user, req.body)
+        .then((msg) => {
+            res.send(msg);
+        }).catch((err) => {
+            res.send(err);
+        });
 });
 
 //====비밀번호찾기 =========================
@@ -82,13 +114,17 @@ router.post('/find', function (req, res, next) {
     res.send("finding");
 });
 
-//====로그인 =============================
-router.post('/login', function (req, res, next) {
-    passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/401',
-    })(req, res, next);
-});
+//====로그인(첫 로그인시 firstLogin 메시지보내짐) =============================
+router.post('/login',
+    passport.authenticate('local', { failureRedirect: '/401' }),
+    function (req, res, next) {
+        isFirstLogin(req.session.passport.user)
+            .then((msg) => {
+                res.send(msg);
+            }).catch((err) => {
+                res.send(err);
+            });
+    });
 
 //====비밀번호 변경 =============================
 router.post('/update', function (req, res, next) {

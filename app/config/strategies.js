@@ -36,8 +36,6 @@ module.exports = function (passport) {
         }))
     });
 
-
-
     // 저요 안드로이드   
     // AIzaSyAR1n1SaxoAOvzjH3677Nct9bZwqXjhVDk
     // 746612525317-ffjie0da94c8u1vur141kfc2i8c6mjsl.apps.googleusercontent.com
@@ -46,10 +44,11 @@ module.exports = function (passport) {
     // 746612525317-k4c6poc0a223v1q4bh81jgbb29lg15s9.apps.googleusercontent.com
     // KAcUV8P9Wr_592tMYOKdjgJj
 
+
     passport.use(new GoogleStrategy({
         clientID: '746612525317-k4c6poc0a223v1q4bh81jgbb29lg15s9.apps.googleusercontent.com',
         clientSecret: 'KAcUV8P9Wr_592tMYOKdjgJj',
-        callbackURL: "https://oauth.pstmn.io/v1/browser-callback",
+        callbackURL: "http://localhost:8080/auth/google/callback",
     },
         function (accessToken, refreshToken, profile, cb) {
             User.findOrCreate({ googleId: profile.id }, function (err, user) {

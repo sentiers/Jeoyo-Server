@@ -30,11 +30,11 @@ var userDataSchema = new Schema({
     user_likedUsers: [], // 관심팀원
     user_likedPosts: [], // 관심 프로젝트
     user_selection: { // 설문조사 결과
-        q1: Number, // 처음팀원들과 만나는 자리
-        q2: Number, // 애인질문
-        q3: Number, // 3일전 아이디어엎어짐
-        q4: Number, // 두 팀원 말다툼
-        q5: Number // 내 의견에 반대의견
+        q1: String, // 처음팀원들과 만나는 자리
+        q2: String, // 애인질문
+        q3: String, // 3일전 아이디어엎어짐
+        q4: String, // 두 팀원 말다툼
+        q5: String // 내 의견에 반대의견
     },
     user_agreement: {
         agreement_m: { // (필수) 이용약관 동의여부 (0:비동의 1:동의)

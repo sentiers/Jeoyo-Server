@@ -1,15 +1,10 @@
-//====HANDLE AUTHORIZATION ROUTES ============================
 var router = require('express').Router();
 var bcrypt = require('bcryptjs');
 var passport = require('passport');
 var UserData = require('../models/userData');
 var User = require('../models/user');
 
-//====UTILITY FUNCTIONS========================================
-
-//==== 메일 인증 =========================
-// 일단 나중에
-
+// ----------------------------------------------------------------
 
 //==== 유저 등록 =========================
 function registerUser(data) {
@@ -91,21 +86,22 @@ function isFirstLogin(email) {
     });
 };
 
+// 메일 인증함수*
+function mail(email) {
+    return new Promise(function (resolve, reject) {
 
 
-// 라우팅 ---------------------------------------------------------------
+
+    });
+};
 
 
-//==== 테스팅  ====
+// ----------------------------------------------------------------
+
+//==== 테스팅 ============================
 router.get('/', function (req, res, next) {
-    res.send("테스트??");
+    res.send("/auth 페이지");
 });
-
-//====이메일인증 =============================
-router.post('/email', function (req, res, next) {
-    res.send("이메일인증??");
-});
-
 
 //====회원가입 ============================
 router.post('/register', function (req, res, next) {
@@ -132,7 +128,7 @@ router.post('/find', function (req, res, next) {
     res.send("finding");
 });
 
-//====로그인(첫 로그인시 firstLogin 메시지보내짐) =============================
+//====로그인(첫 로그인시 firstLogin 메시지보내짐) =======
 router.post('/login',
     passport.authenticate('local', { failureRedirect: '/401' }),
     function (req, res, next) {
@@ -155,7 +151,13 @@ router.get('/logout', function (req, res, next) {
     res.send("성공: 로그아웃");
 });
 
-//====google 계정으로 로그인 =================
+// 이메일인증*
+router.post('/email', function (req, res, next) {
+   
+
+});
+
+// google 계정으로 로그인*
 router.get('/google',
     passport.authenticate('google', {
         scope:
@@ -168,5 +170,8 @@ router.get('/google/callback',
         successRedirect: '/auth',
         failureRedirect: '/401'
     }));
+
+
+// ----------------------------------------------------------------
 
 module.exports = router;

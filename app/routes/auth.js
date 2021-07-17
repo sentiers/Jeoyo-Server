@@ -93,22 +93,19 @@ function isFirstLogin(email) {
 
 
 
-
-
-
-
-
-
-
-
-
 // 라우팅 ---------------------------------------------------------------
 
 
 //==== 테스팅  ====
 router.get('/', function (req, res, next) {
-
+    res.send("테스트??");
 });
+
+//====이메일인증 =============================
+router.post('/email', function (req, res, next) {
+    res.send("이메일인증??");
+});
+
 
 //====회원가입 ============================
 router.post('/register', function (req, res, next) {
@@ -159,8 +156,17 @@ router.get('/logout', function (req, res, next) {
 });
 
 //====google 계정으로 로그인 =================
-router.get('/google', function (req, res, next) {
+router.get('/google',
+    passport.authenticate('google', {
+        scope:
+            ['email', 'profile']
+    }
+    ));
 
-});
+router.get('/google/callback',
+    passport.authenticate('google', {
+        successRedirect: '/auth',
+        failureRedirect: '/401'
+    }));
 
 module.exports = router;

@@ -1,8 +1,10 @@
 var LocalStrategy = require('passport-local').Strategy;
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var bcrypt = require('bcryptjs');
 var User = require('../models/user');
 
 module.exports = function (passport) {
+
     passport.use(
         new LocalStrategy({ usernameField: 'user_email', passwordField: 'user_password' }, (user_email, user_password, done) => {
             User.findOne({
@@ -29,9 +31,30 @@ module.exports = function (passport) {
     });
 
     passport.deserializeUser(function (user_email, done) {
-        User.find({user_email: user_email}).then((data =>{
+        User.find({ user_email: user_email }).then((data => {
             done(null, data);
-        })) 
+        }))
     });
 
+
+
+    // 저요 안드로이드   
+    // AIzaSyAR1n1SaxoAOvzjH3677Nct9bZwqXjhVDk
+    // 746612525317-ffjie0da94c8u1vur141kfc2i8c6mjsl.apps.googleusercontent.com
+
+    //저요 웹
+    // 746612525317-k4c6poc0a223v1q4bh81jgbb29lg15s9.apps.googleusercontent.com
+    // KAcUV8P9Wr_592tMYOKdjgJj
+
+    passport.use(new GoogleStrategy({
+        clientID: '746612525317-k4c6poc0a223v1q4bh81jgbb29lg15s9.apps.googleusercontent.com',
+        clientSecret: 'KAcUV8P9Wr_592tMYOKdjgJj',
+        callbackURL: "https://oauth.pstmn.io/v1/browser-callback",
+    },
+        function (accessToken, refreshToken, profile, cb) {
+            User.findOrCreate({ googleId: profile.id }, function (err, user) {
+                return cb(err, user);
+            });
+        }
+    ));
 }

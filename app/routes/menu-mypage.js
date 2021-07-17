@@ -10,6 +10,7 @@ function getMyInfo(email) {
         UserData.findOne({
             user_email: email
         }).then(user => {
+            console.log(user);
             resolve(user);
         }).catch((err) => {
             reject(err);

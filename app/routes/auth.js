@@ -86,6 +86,54 @@ function isFirstLogin(email) {
     });
 };
 
+//==== 현재유저의 현재 비밀번호확인 ==============
+function checkUser(email, data) {
+    return new Promise(function (resolve, reject) {
+        User.findOne({
+            user_email: email
+        }).then(user => {
+            bcrypt.compare(data.user_password, user.user_password)
+                .then((res) => {
+                    if (res === false) {
+                        reject("오류: 비밀번호가 틀립니다");
+                    } else {
+                        resolve();
+                    }
+                }).catch((err) => {
+                    reject(err);
+                });
+        }).catch((err) => {
+            reject("유저를 찾을 수 없습니다");
+        });
+    });
+};
+
+//==== 비밀번호변경 =========================
+function updatePassword(email, data) {
+    return new Promise(function (resolve, reject) {
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(data.user_new_pwd, salt, (err, hash) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    User.updateOne(
+                        { user_email: email },
+                        {
+                            $set: {
+                                user_password: hash
+                            }
+                        }
+                    ).then(() => {
+                        resolve("비밀번호 변경 완료");
+                    }).catch((err) => {
+                        reject(err);
+                    });
+                }
+            })
+        })
+    });
+};
+
 // 메일 인증함수*
 function mail(email) {
     return new Promise(function (resolve, reject) {
@@ -123,11 +171,6 @@ router.post('/survey', function (req, res, next) {
         });
 });
 
-//====비밀번호찾기 =========================
-router.post('/find', function (req, res, next) {
-    res.send("finding");
-});
-
 //====로그인(첫 로그인시 firstLogin 메시지보내짐) =======
 router.post('/login',
     passport.authenticate('local', { failureRedirect: '/401' }),
@@ -142,7 +185,16 @@ router.post('/login',
 
 //====비밀번호 변경 =============================
 router.post('/update', function (req, res, next) {
-    res.send("updating");
+    checkUser(req.session.passport.user, req.body).then(() => {
+        updatePassword(req.session.passport.user, req.body)
+            .then((msg) => {
+                res.send(msg);
+            }).catch((err) => {
+                res.send(err);
+            });
+    }).catch((err) => {
+        res.send(err);
+    });
 });
 
 //====로그아웃 =============================
@@ -153,7 +205,14 @@ router.get('/logout', function (req, res, next) {
 
 // 이메일인증*
 router.post('/email', function (req, res, next) {
-   
+
+
+});
+
+// 비밀번호찾기*
+router.post('/find', function (req, res, next) {
+
+
 
 });
 

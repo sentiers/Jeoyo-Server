@@ -50,9 +50,9 @@ function updateMyInfo(email, data) {
 router.get('/', function (req, res, next) {
     getMyInfo(req.session.passport.user)
         .then((data) => {
-            res.send(data);
+            res.status(200).send(data);
         }).catch((err) => {
-            res.send(err);
+            res.status(401).send(err);
         });
 });
 

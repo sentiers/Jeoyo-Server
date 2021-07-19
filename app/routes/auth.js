@@ -177,9 +177,9 @@ router.post('/login',
     function (req, res, next) {
         isFirstLogin(req.session.passport.user)
             .then((msg) => {
-                res.send(msg);
+                res.status(200).send(msg);
             }).catch((err) => {
-                res.send(err);
+                res.status(401).send(err);
             });
     });
 

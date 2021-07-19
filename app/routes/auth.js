@@ -155,9 +155,9 @@ router.get('/', function (req, res, next) {
 router.post('/register', function (req, res, next) {
     registerUser(req.body)
         .then((msg) => {
-            res.send(msg);
+            res.status(200).send(msg);
         }).catch((err) => {
-            res.send(err);
+            res.status(401).send(err);
         });
 });
 

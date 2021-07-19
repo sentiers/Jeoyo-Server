@@ -45,15 +45,35 @@ function updateMyInfo(email, data) {
 
 
 
+function testing() {
+    return new Promise(function (resolve, reject) {
+        UserData.findOne({
+            user_name: "keke"
+        }).then(user => {
+            console.log(user);
+            resolve(user);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+};
 
 //====마이페이지 메인 =============================
 router.get('/', function (req, res, next) {
-    getMyInfo(req.session.passport.user)
+    //    getMyInfo(req.session.passport.user)
+    //        .then((data) => {
+    //            res.status(200).send(data);
+    //        }).catch((err) => {
+    //            res.status(401).send(err);
+    //        });
+
+    testing()
         .then((data) => {
             res.status(200).send(data);
         }).catch((err) => {
             res.status(401).send(err);
         });
+
 });
 
 

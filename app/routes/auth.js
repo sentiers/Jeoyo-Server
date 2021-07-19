@@ -155,9 +155,9 @@ router.get('/', function (req, res, next) {
 router.post('/register', function (req, res, next) {
     registerUser(req.body)
         .then((msg) => {
-            res.status(200).send(msg);
+            res.status(200).send();
         }).catch((err) => {
-            res.status(401).send(err);
+            res.status(401).send();
         });
 });
 
@@ -177,9 +177,9 @@ router.post('/login',
     function (req, res, next) {
         isFirstLogin(req.session.passport.user)
             .then((msg) => {
-                res.status(200).send(msg);
+                res.status(200).send();
             }).catch((err) => {
-                res.status(401).send(err);
+                res.status(401).send();
             });
     });
 

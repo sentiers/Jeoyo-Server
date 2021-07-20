@@ -42,7 +42,7 @@ function registerUser(data) {
 };
 
 //==== 유저 설문조사 =========================
-function surveyUser(email, data) {
+function termsOfUse(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
             { user_email: email },
@@ -51,14 +51,7 @@ function surveyUser(email, data) {
                     'user_agreement.agreement_m': data.user_agreement.agreement_m,
                     'user_agreement.info_m': data.user_agreement.info_m,
                     'user_agreement.info_c': data.user_agreement.info_c,
-                    'user_agreement.marketing_c': data.user_agreement.marketing_c,
-                    'user_location': data.user_location,
-                    'user_field': data.user_field,
-                    'user_selection.q1': data.user_selection.q1,
-                    'user_selection.q2': data.user_selection.q2,
-                    'user_selection.q3': data.user_selection.q3,
-                    'user_selection.q4': data.user_selection.q4,
-                    'user_selection.q5': data.user_selection.q5,
+                    'user_agreement.marketing_c': data.user_agreement.marketing_c
                 }
             }
         ).then(() => {
@@ -146,12 +139,18 @@ function mail(email) {
 
 // ----------------------------------------------------------------
 
-//==== 테스팅 ============================
+//==== GET 테스팅 ============================
 router.get('/', function (req, res, next) {
     res.send("/auth 페이지");
 });
 
-//====회원가입 ============================
+//==== GET 로그아웃 =============================
+router.get('/logout', function (req, res, next) {
+    req.logout();
+    res.send("성공: 로그아웃");
+});
+
+//==== POST 회원가입 ============================
 router.post('/register', function (req, res, next) {
     registerUser(req.body)
         .then((msg) => {
@@ -161,9 +160,9 @@ router.post('/register', function (req, res, next) {
         });
 });
 
-//====설문조사 =============================
-router.post('/survey', function (req, res, next) {
-    surveyUser(req.session.passport.user, req.body)
+//==== POST 이용약관 =============================
+router.post('/termsofuse', function (req, res, next) {
+    termsOfUse(req.session.passport.user, req.body)
         .then((msg) => {
             res.send(msg);
         }).catch((err) => {
@@ -171,7 +170,7 @@ router.post('/survey', function (req, res, next) {
         });
 });
 
-//====로그인(첫 로그인시 firstLogin 메시지보내짐) =======
+//==== POST 로그인(첫 로그인시 firstLogin 메시지보내짐) =======
 router.post('/login',
     passport.authenticate('local', { failureRedirect: '/401' }),
     function (req, res, next) {
@@ -183,7 +182,7 @@ router.post('/login',
             });
     });
 
-//====비밀번호 변경 =============================
+//==== POST 비밀번호 변경 =============================
 router.post('/update', function (req, res, next) {
     checkUser(req.session.passport.user, req.body).then(() => {
         updatePassword(req.session.passport.user, req.body)
@@ -197,11 +196,6 @@ router.post('/update', function (req, res, next) {
     });
 });
 
-//====로그아웃 =============================
-router.get('/logout', function (req, res, next) {
-    req.logout();
-    res.send("성공: 로그아웃");
-});
 
 // 이메일인증*
 router.post('/email', function (req, res, next) {

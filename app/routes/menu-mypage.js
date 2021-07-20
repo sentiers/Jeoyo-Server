@@ -1,10 +1,10 @@
 //====HANDLE MY PAGE ROUTES =============
 var router = require('express').Router();
-var User = require('../models/user');
 var UserData = require('../models/userData');
 
+// ----------------------------------------------------------------
 
-//==== 내 정보가져오기 =========================
+//==== 유저 정보가져오기 =========================
 function getMyInfo(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
@@ -18,9 +18,7 @@ function getMyInfo(email) {
     });
 };
 
-
-
-//==== 내 정보 업데이트 =========================
+//==== 개인정보 수정 (한꺼번에) =========================
 function updateMyInfo(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -36,15 +34,72 @@ function updateMyInfo(email, data) {
                 }
             }
         ).then(() => {
-            resolve("설문조사 완료");
+            resolve("개인정보 수정 완료");
         }).catch((err) => {
             reject(err);
         });
     });
 };
 
+//==== 지역 수정 =========================
+function updateLocation(email, data) {
+    return new Promise(function (resolve, reject) {
+        UserData.updateOne(
+            { user_email: email },
+            {
+                $set: {
+                    'user_location': data.user_location
+                }
+            }
+        ).then(() => {
+            resolve("지역 수정 완료");
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+};
 
+//==== 관심분야 수정 =========================
+function updateField(email, data) {
+    return new Promise(function (resolve, reject) {
+        UserData.updateOne(
+            { user_email: email },
+            {
+                $set: {
+                    'user_field': data.user_field
+                }
+            }
+        ).then(() => {
+            resolve("관심분야 수정 완료");
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+};
 
+//==== 설문지 수정 =========================
+function updateSurvey(email, data) {
+    return new Promise(function (resolve, reject) {
+        UserData.updateOne(
+            { user_email: email },
+            {
+                $set: {
+                    'user_selection.q1': data.user_selection.q1,
+                    'user_selection.q2': data.user_selection.q2,
+                    'user_selection.q3': data.user_selection.q3,
+                    'user_selection.q4': data.user_selection.q4,
+                    'user_selection.q5': data.user_selection.q5,
+                }
+            }
+        ).then(() => {
+            resolve("설문지 수정 완료");
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+};
+
+// 테스팅용 데이터보내는 함수 user_name = "keke"
 function testing() {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
@@ -58,7 +113,9 @@ function testing() {
     });
 };
 
-//====마이페이지 메인 =============================
+// ----------------------------------------------------------------
+
+//==== GET 유저정보가져오기 =============================
 router.get('/', function (req, res, next) {
     //    getMyInfo(req.session.passport.user)
     //        .then((data) => {
@@ -73,31 +130,9 @@ router.get('/', function (req, res, next) {
         }).catch((err) => {
             res.status(401).send(err);
         });
-
 });
 
-
-//====내 정보 보기=============================
-router.get('/info', function (req, res, next) {
-    getMyInfo(req.session.passport.user)
-        .then((data) => {
-            res.send(data);
-        }).catch((err) => {
-            res.send(err);
-        });
-});
-
-//====GET 업데이트 =============================
-router.get('/update', function (req, res, next) {
-    getMyInfo(req.session.passport.user)
-        .then((data) => {
-            res.send(data);
-        }).catch((err) => {
-            res.send(err);
-        });
-});
-
-//====POST 업데이트 =============================
+//==== POST 유저 정보수정(한꺼번에) =============================
 router.post('/update', function (req, res, next) {
     updateMyInfo(req.session.passport.user, req.body)
         .then((msg) => {
@@ -107,7 +142,34 @@ router.post('/update', function (req, res, next) {
         });
 });
 
+//==== POST 지역 수정 =============================
+router.post('/location', function (req, res, next) {
+    updateLocation(req.session.passport.user, req.body)
+        .then((msg) => {
+            res.send(msg);
+        }).catch((err) => {
+            res.send(err);
+        });
+});
 
+//==== POST 관심분야 수정 =============================
+router.post('/field', function (req, res, next) {
+    updateField(req.session.passport.user, req.body)
+        .then((msg) => {
+            res.send(msg);
+        }).catch((err) => {
+            res.send(err);
+        });
+});
 
+//==== POST 설문지 =============================
+router.post('/survey', function (req, res, next) {
+    updateSurvey(req.session.passport.user, req.body)
+        .then((msg) => {
+            res.send(msg);
+        }).catch((err) => {
+            res.send(err);
+        });
+});
 
 module.exports = router;

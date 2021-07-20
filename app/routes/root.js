@@ -21,4 +21,17 @@ router.get('/401', function (req, res, next) {
     res.status('401').end('인증 실패');
 })
 
+// https://www.whatap.io/ko/blog/40/
+
+// 200: 요청이 성공적
+// 201: 성공적으로 생성되었음
+
+// 400: 잘못된 문법
+// 401: 비인증
+// 403: 권한부족
+// 404: NOT FOUND
+// 409: 리소스와 타켓리소스가 충돌
+
+// 500: 서버에러
+
 module.exports = router;

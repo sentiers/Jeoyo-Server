@@ -19,9 +19,9 @@ function registerUser(data) {
                 newUser.save((err) => {
                     if (err) {
                         if (err.code == 11000) {
-                            reject("에러: 해당 이메일은 사용중입니다");
+                            reject(409);
                         } else {
-                            reject("에러: " + err);
+                            reject(500);
                         }
                     } else {
                         var newUserData = new UserData();
@@ -29,9 +29,9 @@ function registerUser(data) {
                         newUserData.user_email = data.user_email;
                         newUserData.save((err) => {
                             if (err) {
-                                reject("에러: " + err);
+                                reject(500);
                             } else {
-                                resolve("성공: 유저 등록");
+                                resolve(201);
                             }
                         });
                     }
@@ -55,9 +55,9 @@ function termsOfUse(email, data) {
                 }
             }
         ).then(() => {
-            resolve("설문조사 완료");
+            resolve(200);
         }).catch((err) => {
-            reject(err);
+            reject(401);
         });
     });
 };
@@ -68,13 +68,13 @@ function isFirstLogin(email) {
         UserData.findOne({
             user_email: email
         }).then(user => {
-            var msg = "환영합니다 " + user.user_name + "님";
             if (user.user_agreement.agreement_m == 0) {
-                msg = "firstLogin";
+                resolve(201);
+            } else {
+                resolve(200);
             }
-            resolve(msg);
         }).catch((err) => {
-            reject(err);
+            reject(401);
         });
     });
 };
@@ -88,15 +88,15 @@ function checkUser(email, data) {
             bcrypt.compare(data.user_password, user.user_password)
                 .then((res) => {
                     if (res === false) {
-                        reject("오류: 비밀번호가 틀립니다");
+                        reject(401);
                     } else {
-                        resolve();
+                        resolve(200);
                     }
                 }).catch((err) => {
-                    reject(err);
+                    reject(401);
                 });
         }).catch((err) => {
-            reject("유저를 찾을 수 없습니다");
+            reject(401);
         });
     });
 };
@@ -107,7 +107,7 @@ function updatePassword(email, data) {
         bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(data.user_new_pwd, salt, (err, hash) => {
                 if (err) {
-                    reject(err);
+                    reject(500);
                 } else {
                     User.updateOne(
                         { user_email: email },
@@ -117,9 +117,9 @@ function updatePassword(email, data) {
                             }
                         }
                     ).then(() => {
-                        resolve("비밀번호 변경 완료");
+                        resolve(200);
                     }).catch((err) => {
-                        reject(err);
+                        reject(401);
                     });
                 }
             })
@@ -153,32 +153,31 @@ router.get('/logout', function (req, res, next) {
 //==== POST 회원가입 ============================
 router.post('/register', function (req, res, next) {
     registerUser(req.body)
-        .then((msg) => {
-            res.status(200).send(msg);
-        }).catch((err) => {
-            res.status(401).send(err);
+        .then((code) => {
+            res.status(code).send(code + ": 회원가입 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 회원가입 실패");
         });
 });
 
 //==== POST 이용약관 =============================
 router.post('/termsofuse', function (req, res, next) {
     termsOfUse(req.session.passport.user, req.body)
-        .then((msg) => {
-            res.send(msg);
-        }).catch((err) => {
-            res.send(err);
+        .then((code) => {
+            res.status(code).send(code + ": 이용약관 동의 완료");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 이용약관 동의시 문제가 발생하였습니다");
         });
 });
 
 //==== POST 로그인(첫 로그인시 firstLogin 메시지보내짐) =======
 router.post('/login',
-    passport.authenticate('local', { failureRedirect: '/401' }),
-    function (req, res, next) {
+    passport.authenticate('local'), function (req, res, next) {
         isFirstLogin(req.session.passport.user)
-            .then((msg) => {
-                res.status(200).send(msg);
-            }).catch((err) => {
-                res.status(401).send(err);
+            .then((code) => {
+                res.status(code).send(code + ": 로그인 성공");
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 로그인 실패");
             });
     });
 
@@ -186,13 +185,13 @@ router.post('/login',
 router.post('/update', function (req, res, next) {
     checkUser(req.session.passport.user, req.body).then(() => {
         updatePassword(req.session.passport.user, req.body)
-            .then((msg) => {
-                res.send(msg);
-            }).catch((err) => {
-                res.send(err);
+            .then((code) => {
+                res.status(code).send(code + ": 비밀번호 변경 성공");
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 비밀번호 변경 실패");
             });
-    }).catch((err) => {
-        res.send(err);
+    }).catch((errcode) => {
+        res.status(errcode).send(errcode + ": 사용자인증 실패");
     });
 });
 

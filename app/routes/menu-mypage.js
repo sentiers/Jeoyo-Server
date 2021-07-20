@@ -10,10 +10,9 @@ function getMyInfo(email) {
         UserData.findOne({
             user_email: email
         }).then(user => {
-            console.log(user);
-            resolve(user);
+            resolve([200, user]);
         }).catch((err) => {
-            reject(err);
+            reject(401);
         });
     });
 };
@@ -34,9 +33,9 @@ function updateMyInfo(email, data) {
                 }
             }
         ).then(() => {
-            resolve("개인정보 수정 완료");
+            resolve(200);
         }).catch((err) => {
-            reject(err);
+            reject(401);
         });
     });
 };
@@ -52,9 +51,9 @@ function updateLocation(email, data) {
                 }
             }
         ).then(() => {
-            resolve("지역 수정 완료");
+            resolve(200);
         }).catch((err) => {
-            reject(err);
+            reject(401);
         });
     });
 };
@@ -70,9 +69,9 @@ function updateField(email, data) {
                 }
             }
         ).then(() => {
-            resolve("관심분야 수정 완료");
+            resolve(200);
         }).catch((err) => {
-            reject(err);
+            reject(401);
         });
     });
 };
@@ -92,9 +91,9 @@ function updateSurvey(email, data) {
                 }
             }
         ).then(() => {
-            resolve("설문지 수정 완료");
+            resolve(200);
         }).catch((err) => {
-            reject(err);
+            reject(401);
         });
     });
 };
@@ -103,12 +102,11 @@ function updateSurvey(email, data) {
 function testing() {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
-            user_name: "keke"
+            user_email: "1234@naver.com"
         }).then(user => {
-            console.log(user);
-            resolve(user);
+            resolve([200, user]);
         }).catch((err) => {
-            reject(err);
+            reject(401);
         });
     });
 };
@@ -119,56 +117,55 @@ function testing() {
 router.get('/', function (req, res, next) {
     //    getMyInfo(req.session.passport.user)
     //        .then((data) => {
-    //            res.status(200).send(data);
-    //        }).catch((err) => {
-    //            res.status(401).send(err);
+    //            res.status(data[0]).send(data[1]);
+    //        }).catch((errcode) => {
+    //            res.status(errcode).send(errcode + ": 유저 정보 가져오기 실패");
     //        });
-
     testing()
         .then((data) => {
-            res.status(200).send(data);
-        }).catch((err) => {
-            res.status(401).send(err);
+            res.status(data[0]).send(data[1]);
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 유저 정보 가져오기 실패");
         });
 });
 
 //==== POST 유저 정보수정(한꺼번에) =============================
 router.post('/update', function (req, res, next) {
     updateMyInfo(req.session.passport.user, req.body)
-        .then((msg) => {
-            res.send(msg);
-        }).catch((err) => {
-            res.send(err);
+        .then((code) => {
+            res.status(code).send(code + ": 유저 정보 수정 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 유저 정보 수정 실패");
         });
 });
 
 //==== POST 지역 수정 =============================
 router.post('/location', function (req, res, next) {
     updateLocation(req.session.passport.user, req.body)
-        .then((msg) => {
-            res.send(msg);
-        }).catch((err) => {
-            res.send(err);
+        .then((code) => {
+            res.status(code).send(code + ": 지역 수정 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 지역 수정 실패");
         });
 });
 
 //==== POST 관심분야 수정 =============================
 router.post('/field', function (req, res, next) {
     updateField(req.session.passport.user, req.body)
-        .then((msg) => {
-            res.send(msg);
-        }).catch((err) => {
-            res.send(err);
+        .then((code) => {
+            res.status(code).send(code + ": 관심분야 수정 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 관심분야 수정 실패");
         });
 });
 
-//==== POST 설문지 =============================
+//==== POST 설문 =============================
 router.post('/survey', function (req, res, next) {
     updateSurvey(req.session.passport.user, req.body)
-        .then((msg) => {
-            res.send(msg);
-        }).catch((err) => {
-            res.send(err);
+        .then((code) => {
+            res.status(code).send(code + ": 설문 수정 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 설문 수정 실패");
         });
 });
 

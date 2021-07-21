@@ -115,18 +115,18 @@ function testing() {
 
 //==== GET 유저정보가져오기 =============================
 router.get('/', function (req, res, next) {
-    getMyInfo(req.session.passport.user)
+    //        getMyInfo(req.session.passport.user)
+    //            .then((data) => {
+    //               res.status(data[0]).send(data[1]);
+    //            }).catch((errcode) => {
+    //                res.status(errcode).send(errcode + ": 유저 정보 가져오기 실패");
+    //            });
+    testing()
         .then((data) => {
             res.status(data[0]).send(data[1]);
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 유저 정보 가져오기 실패");
         });
-    //    testing()
-    //        .then((data) => {
-    //            res.status(data[0]).send(data[1]);
-    //        }).catch((errcode) => {
-    //            res.status(errcode).send(errcode + ": 유저 정보 가져오기 실패");
-    //        });
 });
 
 //==== POST 유저 정보수정(한꺼번에) =============================

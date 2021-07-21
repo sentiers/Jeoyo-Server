@@ -13,7 +13,7 @@ function registerUser(data) {
         bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(newUser.user_password, salt, (err, hash) => {
                 if (err) {
-                    reject(err);
+                    reject(500);
                 }
                 newUser.user_password = hash;
                 newUser.save((err) => {
@@ -147,7 +147,7 @@ router.get('/', function (req, res, next) {
 //==== GET 로그아웃 =============================
 router.get('/logout', function (req, res, next) {
     req.logout();
-    res.send("성공: 로그아웃");
+    res.status(200).send("200: 로그아웃 성공");
 });
 
 //==== POST 회원가입 ============================

@@ -40,6 +40,25 @@ function updateMyInfo(email, data) {
     });
 };
 
+//==== 유저 인트로수정 =========================
+function updateMyIntro(email, data) {
+    return new Promise(function (resolve, reject) {
+        UserData.updateOne(
+            { user_email: email },
+            {
+                $set: {
+                    'user_introduction': data.user_introduction,
+                    'user_history': data.user_history
+                }
+            }
+        ).then(() => {
+            resolve(200);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
 //==== 지역 수정 =========================
 function updateLocation(email, data) {
     return new Promise(function (resolve, reject) {
@@ -136,6 +155,16 @@ router.post('/update', function (req, res, next) {
             res.status(code).send(code + ": 유저 정보 수정 성공");
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 유저 정보 수정 실패");
+        });
+});
+
+//==== POST 유저 인트로수정 =============================
+router.post('/updateintro', function (req, res, next) {
+    updateMyIntro(req.session.passport.user, req.body)
+        .then((code) => {
+            res.status(code).send(code + ": 유저 인트로 수정 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 유저 인트로 수정 실패");
         });
 });
 

@@ -21,6 +21,8 @@ router.get('/401', function (req, res, next) {
     res.status('401').end('인증 실패');
 })
 
+// jwt 잘못되면 401 뜸
+ 
 // https://www.whatap.io/ko/blog/40/
 
 // 200: 요청이 성공적

@@ -3,6 +3,7 @@ var bcrypt = require('bcryptjs');
 var passport = require('passport');
 var UserData = require('../models/userData');
 var User = require('../models/user');
+var jwt = require('jsonwebtoken');
 
 // ----------------------------------------------------------------
 
@@ -140,12 +141,12 @@ function mail(email) {
 // ----------------------------------------------------------------
 
 //==== GET 테스팅 ============================
-router.get('/', function (req, res, next) {
+router.get('/', passport.authenticate('jwt', { session: false }), function (req, res, next) {
     res.send("/auth 페이지");
 });
 
 //==== GET 로그아웃 =============================
-router.get('/logout', function (req, res, next) {
+router.get('/logout', passport.authenticate('jwt', { session: false }), function (req, res, next) {
     req.logout();
     res.status(200).send("200: 로그아웃 성공");
 });
@@ -161,8 +162,8 @@ router.post('/register', function (req, res, next) {
 });
 
 //==== POST 이용약관 =============================
-router.post('/termsofuse', function (req, res, next) {
-    termsOfUse(req.session.passport.user, req.body)
+router.post('/termsofuse', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+    termsOfUse(req.user.user_email, req.body)
         .then((code) => {
             res.status(code).send(code + ": 이용약관 동의 완료");
         }).catch((errcode) => {
@@ -170,21 +171,29 @@ router.post('/termsofuse', function (req, res, next) {
         });
 });
 
-//==== POST 로그인(첫 로그인시 firstLogin 메시지보내짐) =======
-router.post('/login',
-    passport.authenticate('local'), function (req, res, next) {
-        isFirstLogin(req.session.passport.user)
-            .then((code) => {
-                res.status(code).send(code + ": 로그인 성공");
-            }).catch((errcode) => {
-                res.status(errcode).send(errcode + ": 로그인 실패");
+//==== POST 로그인(첫 로그인시 status 200 보내짐) =======
+router.post('/login', function (req, res, next) {
+    passport.authenticate('local', { session: false }, (err, user) => {
+        if (err || !user) {
+            res.status(401).send("401: 로그인 실패");
+        } else {
+            req.login(user, { session: false }, (err) => {
+                var token = jwt.sign(user.toJSON(), '2021jeoyoapp2021');
+                isFirstLogin(user.user_email)
+                    .then((code) => {
+                        res.status(code).json({ user, token });
+                    }).catch((errcode) => {
+                        res.status(errcode).send(errcode + ": 로그인 실패");
+                    });
             });
-    });
+        }
+    })(req, res);
+});
 
 //==== POST 비밀번호 변경 =============================
-router.post('/update', function (req, res, next) {
-    checkUser(req.session.passport.user, req.body).then(() => {
-        updatePassword(req.session.passport.user, req.body)
+router.post('/update', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+    checkUser(req.user.user_email, req.body).then(() => {
+        updatePassword(req.user.user_email, req.body)
             .then((code) => {
                 res.status(code).send(code + ": 비밀번호 변경 성공");
             }).catch((errcode) => {
@@ -194,6 +203,7 @@ router.post('/update', function (req, res, next) {
         res.status(errcode).send(errcode + ": 사용자인증 실패");
     });
 });
+
 
 // 이메일인증*
 router.post('/email', function (req, res, next) {

@@ -1,4 +1,10 @@
+var passport = require('passport');
+var passportJWT = require("passport-jwt");
+
+var ExtractJWT = passportJWT.ExtractJwt;
+
 var LocalStrategy = require('passport-local').Strategy;
+var JWTStrategy = passportJWT.Strategy;
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var bcrypt = require('bcryptjs');
 var User = require('../models/user');
@@ -26,6 +32,20 @@ module.exports = function (passport) {
         })
     );
 
+    passport.use(new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: '2021jeoyoapp2021'
+    }, function (jwtPayload, done) {
+        return User.findOne(jwtPayload.id)
+            .then(user => {
+                return done(null, user);
+            })
+            .catch(err => {
+                return done(err);
+            });
+    }
+    ));
+
     passport.serializeUser(function (user, done) {
         done(null, user.user_email);
     });
@@ -43,7 +63,6 @@ module.exports = function (passport) {
     //저요 웹
     // 746612525317-k4c6poc0a223v1q4bh81jgbb29lg15s9.apps.googleusercontent.com
     // KAcUV8P9Wr_592tMYOKdjgJj
-
 
     passport.use(new GoogleStrategy({
         clientID: '746612525317-k4c6poc0a223v1q4bh81jgbb29lg15s9.apps.googleusercontent.com',

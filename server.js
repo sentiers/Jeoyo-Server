@@ -28,26 +28,17 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCrea
 app.use(express.static(path.join(__dirname, 'app')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
-  secret: '2021jeoyoapp2021',
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 5
-  },
-  resave: false, // maybe true
-  saveUninitialized: false // maybe true
-}));
 app.use(passport.initialize());
-app.use(passport.session());
 require(path.join(__dirname, 'app', 'config', 'strategies'))(passport);
 
 //====ROUTING===============================================
 app.use('/', root);
 app.use('/auth', auth);
-app.use('/chat', chat);
-app.use('/post', post);
-app.use('/explore', explore);
-app.use('/home', home);
-app.use('/mypage', mypage);
+app.use('/chat', passport.authenticate('jwt', { session: false }), chat);
+app.use('/post', passport.authenticate('jwt', { session: false }), post);
+app.use('/explore', passport.authenticate('jwt', { session: false }), explore);
+app.use('/home', passport.authenticate('jwt', { session: false }), home);
+app.use('/mypage', passport.authenticate('jwt', { session: false }), mypage);
 
 //====LISTEN TO THE SERVER =================================
 app.listen(process.env.PORT || 8080,

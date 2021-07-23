@@ -134,7 +134,7 @@ function testing() {
 
 //==== GET 유저정보가져오기 =============================
 router.get('/', function (req, res, next) {
-    getMyInfo(req.header)
+    getMyInfo(req.user.user_email)
         .then((data) => {
             res.status(data[0]).send(data[1]);
         }).catch((errcode) => {
@@ -150,7 +150,7 @@ router.get('/', function (req, res, next) {
 
 //==== POST 유저 정보수정(한꺼번에) =============================
 router.post('/update', function (req, res, next) {
-    updateMyInfo(req.session.passport.user, req.body)
+    updateMyInfo(req.user.user_email, req.body)
         .then((code) => {
             res.status(code).send(code + ": 유저 정보 수정 성공");
         }).catch((errcode) => {
@@ -160,7 +160,7 @@ router.post('/update', function (req, res, next) {
 
 //==== POST 유저 인트로수정 =============================
 router.post('/updateintro', function (req, res, next) {
-    updateMyIntro(req.session.passport.user, req.body)
+    updateMyIntro(req.user.user_email, req.body)
         .then((code) => {
             res.status(code).send(code + ": 유저 인트로 수정 성공");
         }).catch((errcode) => {
@@ -170,7 +170,7 @@ router.post('/updateintro', function (req, res, next) {
 
 //==== POST 지역 수정 =============================
 router.post('/location', function (req, res, next) {
-    updateLocation(req.session.passport.user, req.body)
+    updateLocation(req.user.user_email, req.body)
         .then((code) => {
             res.status(code).send(code + ": 지역 수정 성공");
         }).catch((errcode) => {
@@ -180,7 +180,7 @@ router.post('/location', function (req, res, next) {
 
 //==== POST 관심분야 수정 =============================
 router.post('/field', function (req, res, next) {
-    updateField(req.session.passport.user, req.body)
+    updateField(req.user.user_email, req.body)
         .then((code) => {
             res.status(code).send(code + ": 관심분야 수정 성공");
         }).catch((errcode) => {
@@ -190,7 +190,7 @@ router.post('/field', function (req, res, next) {
 
 //==== POST 설문 =============================
 router.post('/survey', function (req, res, next) {
-    updateSurvey(req.session.passport.user, req.body)
+    updateSurvey(req.user.user_email, req.body)
         .then((code) => {
             res.status(code).send(code + ": 설문 수정 성공");
         }).catch((errcode) => {

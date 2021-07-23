@@ -195,7 +195,6 @@ router.post('/update', function (req, res, next) {
     });
 });
 
-
 // 이메일인증*
 router.post('/email', function (req, res, next) {
 

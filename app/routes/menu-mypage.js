@@ -148,6 +148,7 @@ router.get('/', function (req, res, next) {
     //        });
 });
 
+
 //==== POST 유저 정보수정(한꺼번에) =============================
 router.post('/update', function (req, res, next) {
     updateMyInfo(req.user.user_email, req.body)

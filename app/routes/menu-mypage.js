@@ -1,6 +1,7 @@
 //====HANDLE MY PAGE ROUTES =============
 var router = require('express').Router();
 var UserData = require('../models/userData');
+var Post = require('../models/post');
 
 // ----------------------------------------------------------------
 
@@ -11,6 +12,27 @@ function getMyInfo(email) {
             user_email: email
         }).then(user => {
             resolve([200, user]);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+//==== 유저가 올린 모집글 데이터들 가져오기 =========================
+function getMyPosts(email) {
+    return new Promise(function (resolve, reject) {
+        UserData.findOne({
+            user_email: email
+        }).then(user => {
+            Post.find({
+                post_user_id: user.id
+            }).then(data => {
+                if (data.length == 0) {
+                    reject(404);
+                } else {
+                    resolve([200, data]);
+                }
+            })
         }).catch((err) => {
             reject(401);
         });
@@ -132,7 +154,7 @@ function testing() {
 
 // ----------------------------------------------------------------
 
-//==== GET 유저정보가져오기 =============================
+//==== GET 유저 정보 가져오기 =============================
 router.get('/', function (req, res, next) {
     getMyInfo(req.user.user_email)
         .then((data) => {
@@ -148,6 +170,16 @@ router.get('/', function (req, res, next) {
     //        });
 });
 
+
+//==== GET 유저가 쓴 모집글 가져오기 =============================
+router.get('/posts', function (req, res, next) {
+    getMyPosts(req.user.user_email)
+        .then((data) => {
+            res.status(data[0]).send(data[1]);
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 유저 모집글 가져오기 실패");
+        });
+});
 
 //==== POST 유저 정보수정(한꺼번에) =============================
 router.post('/update', function (req, res, next) {

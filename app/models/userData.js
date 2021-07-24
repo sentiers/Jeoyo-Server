@@ -25,7 +25,6 @@ var userDataSchema = new Schema({
         competent: Number // 기대이상의 퍼포먼스를 보여줘요
     },
     user_cmt_posts: [], // 내가 쓴 댓글
-    user_posts: [], // 내가 쓴 모집글
     user_projects: [], // 나의 프로젝트
     user_likedUsers: [], // 관심팀원
     user_likedPosts: [], // 관심 프로젝트

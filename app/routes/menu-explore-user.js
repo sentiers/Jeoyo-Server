@@ -10,13 +10,12 @@ moment.tz.setDefault("Asia/Seoul");
 //==== 모든 유저 가져오기 =========================
 function getAllUsers(email) {
     return new Promise(function (resolve, reject) {
-        UserData.find({
-            user_email: email
-        }).then(user => {
-            resolve([200, user]);
-        }).catch((err) => {
-            reject(401);
-        });
+        UserData.find()
+            .then(user => {
+                resolve([200, user]);
+            }).catch((err) => {
+                reject(401);
+            });
     });
 };
 

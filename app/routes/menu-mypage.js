@@ -5,7 +5,7 @@ var Post = require('../models/post');
 
 // ----------------------------------------------------------------
 
-//==== 유저 정보가져오기 =========================
+//==== 내 정보가져오기 =========================
 function getMyInfo(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
@@ -18,7 +18,7 @@ function getMyInfo(email) {
     });
 };
 
-//==== 유저가 올린 모집글 데이터들 가져오기 =========================
+//==== 내가 올린 모집글 데이터들 가져오기 =========================
 function getMyPosts(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
@@ -62,7 +62,7 @@ function updateMyInfo(email, data) {
     });
 };
 
-//==== 유저 인트로수정 =========================
+//==== 내 인트로수정 =========================
 function updateMyIntro(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -81,7 +81,7 @@ function updateMyIntro(email, data) {
     });
 };
 
-//==== 지역 수정 =========================
+//==== 내 지역 수정 =========================
 function updateLocation(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -99,7 +99,7 @@ function updateLocation(email, data) {
     });
 };
 
-//==== 관심분야 수정 =========================
+//==== 내 관심분야 수정 =========================
 function updateField(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -117,7 +117,7 @@ function updateField(email, data) {
     });
 };
 
-//==== 설문지 수정 =========================
+//==== 내 설문지 수정 =========================
 function updateSurvey(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -154,7 +154,7 @@ function testing() {
 
 // ----------------------------------------------------------------
 
-//==== GET 유저 정보 가져오기 =============================
+//==== GET 내 정보 가져오기 =============================
 router.get('/', function (req, res, next) {
     getMyInfo(req.user.user_email)
         .then((data) => {
@@ -171,7 +171,7 @@ router.get('/', function (req, res, next) {
 });
 
 
-//==== GET 유저가 쓴 모집글 가져오기 =============================
+//==== GET 내가 쓴 모집글 가져오기 =============================
 router.get('/posts', function (req, res, next) {
     getMyPosts(req.user.user_email)
         .then((data) => {
@@ -181,7 +181,7 @@ router.get('/posts', function (req, res, next) {
         });
 });
 
-//==== POST 유저 정보수정(한꺼번에) =============================
+//==== POST 내 정보수정(한꺼번에) =============================
 router.post('/update', function (req, res, next) {
     updateMyInfo(req.user.user_email, req.body)
         .then((code) => {
@@ -191,7 +191,7 @@ router.post('/update', function (req, res, next) {
         });
 });
 
-//==== POST 유저 인트로수정 =============================
+//==== POST 내 인트로수정 =============================
 router.post('/updateintro', function (req, res, next) {
     updateMyIntro(req.user.user_email, req.body)
         .then((code) => {
@@ -201,7 +201,7 @@ router.post('/updateintro', function (req, res, next) {
         });
 });
 
-//==== POST 지역 수정 =============================
+//==== POST 내 지역 수정 =============================
 router.post('/location', function (req, res, next) {
     updateLocation(req.user.user_email, req.body)
         .then((code) => {
@@ -211,7 +211,7 @@ router.post('/location', function (req, res, next) {
         });
 });
 
-//==== POST 관심분야 수정 =============================
+//==== POST 내 관심분야 수정 =============================
 router.post('/field', function (req, res, next) {
     updateField(req.user.user_email, req.body)
         .then((code) => {
@@ -221,7 +221,7 @@ router.post('/field', function (req, res, next) {
         });
 });
 
-//==== POST 설문 =============================
+//==== POST 내 설문지 수정 =============================
 router.post('/survey', function (req, res, next) {
     updateSurvey(req.user.user_email, req.body)
         .then((code) => {

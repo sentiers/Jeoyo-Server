@@ -36,4 +36,12 @@ router.get('/401', function (req, res, next) {
 
 // 500: 서버에러
 
+// 유저 하나, 포스트하나 가져올때 
+// /person/:id - path variable - req.params.id
+//
+// 필터링할때
+// /people - query string - req.query.vin
+
+
+
 module.exports = router;

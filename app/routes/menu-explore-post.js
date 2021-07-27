@@ -10,7 +10,7 @@ moment.tz.setDefault("Asia/Seoul");
 function getPostById(idData) {
     return new Promise(function (resolve, reject) {
         Post.findOne({
-            id: idData
+            _id: idData
         }).then(post => {
             resolve([200, post]);
         }).catch((err) => {
@@ -18,6 +18,19 @@ function getPostById(idData) {
         });
     });
 };
+
+//==== 모든 게시물 가져오기 =========================
+function getAllPosts() {
+    return new Promise(function (resolve, reject) {
+        Post.find()
+            .then(data => {
+                resolve([200, data]);
+            }).catch((err) => {
+                reject(401);
+            });
+    });
+};
+
 
 //==== 게시물 생성 =========================
 function createPost(email, data) {
@@ -48,14 +61,27 @@ function createPost(email, data) {
 
 //==== GET 게시물 id 별로 하나 가져오기 =============================
 router.get('/:id', function (req, res, next) {
-    console.log(req);
-    console.log(req.params);
     getPostById(req.params.id)
         .then((data) => {
             res.status(data[0]).send(data[1]);
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
         });
+});
+
+//==== GET 게시물 필터링 =============================
+router.get('/', function (req, res, next) {
+    if (req.query.division) {
+        console.log(req.query.division);
+    }
+    else {
+        getAllPosts()
+            .then((data) => {
+                res.status(data[0]).send(data[1]);
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 모든 게시물 가져오기 실패");
+            });
+    }
 });
 
 //==== POST 게시물 만들기 =============================

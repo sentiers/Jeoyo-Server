@@ -3,6 +3,7 @@ var router = require('express').Router();
 var UserData = require('../models/userData');
 var Post = require('../models/post');
 var moment = require('moment');
+const { post } = require('./menu-home');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 // ----------------------------------------------------------------
@@ -13,6 +14,135 @@ function getPostById(idData) {
             _id: idData
         }).then(post => {
             resolve([200, post]);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+//==== 게시물 구분 & 지역 & 분야 & 정렬 필터=========================
+function getDivisionLocationFieldSortPosts(division, location, field, sort) {
+    return new Promise(function (resolve, reject) {
+        Post.find(
+            {
+                post_division: division,
+                post_location: { $elemMatch: { $eq: location } },
+                post_field: field
+            }
+        ).then(post => {
+            resolve([200, post]);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+//==== 게시물 구분 & 지역 & 분야 필터=========================
+function getDivisionLocationFieldPosts(division, location, field) {
+    return new Promise(function (resolve, reject) {
+        UserData.find(
+            {
+                user_location: { $elemMatch: { $eq: location } },
+                user_field: { $elemMatch: { $eq: field } }
+            }
+        ).then(user => {
+            resolve([200, user]);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+//==== 게시물 구분 & 지역 & 정렬 필터=========================
+function getDivisionLocationSortPosts(division, location, sort) {
+    return new Promise(function (resolve, reject) {
+        UserData.find(
+            {
+                user_location: { $elemMatch: { $eq: location } },
+                user_field: { $elemMatch: { $eq: field } }
+            }
+        ).then(user => {
+            resolve([200, user]);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+//==== 게시물 구분 & 분야 & 정렬 필터=========================
+function getDivisionFieldSortPosts(division, field, sort) {
+    return new Promise(function (resolve, reject) {
+        UserData.find(
+            {
+                user_location: { $elemMatch: { $eq: location } },
+                user_field: { $elemMatch: { $eq: field } }
+            }
+        ).then(user => {
+            resolve([200, user]);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+//==== 게시물 구분 & 지역 필터=========================
+function getDivisionLocationPosts(division, location) {
+    return new Promise(function (resolve, reject) {
+        UserData.find(
+            {
+                user_location: { $elemMatch: { $eq: location } },
+                user_field: { $elemMatch: { $eq: field } }
+            }
+        ).then(user => {
+            resolve([200, user]);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+//==== 게시물 구분 & 분야 필터=========================
+function getDivisionFieldPosts(division, field) {
+    return new Promise(function (resolve, reject) {
+        UserData.find(
+            {
+                user_location: { $elemMatch: { $eq: location } },
+                user_field: { $elemMatch: { $eq: field } }
+            }
+        ).then(user => {
+            resolve([200, user]);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+//==== 게시물 구분 & 정렬 필터=========================
+function getDivisionSortPosts(division, sort) {
+    return new Promise(function (resolve, reject) {
+        UserData.find(
+            {
+                user_location: { $elemMatch: { $eq: location } },
+                user_field: { $elemMatch: { $eq: field } }
+            }
+        ).then(user => {
+            resolve([200, user]);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+//==== 게시물 구분 필터=========================
+function getDivisionPosts(division) {
+    return new Promise(function (resolve, reject) {
+        UserData.find(
+            {
+                user_location: { $elemMatch: { $eq: location } },
+                user_field: { $elemMatch: { $eq: field } }
+            }
+        ).then(user => {
+            resolve([200, user]);
         }).catch((err) => {
             reject(401);
         });
@@ -71,13 +201,63 @@ router.get('/:id', function (req, res, next) {
 
 //==== GET 게시물 필터링 =============================
 router.get('/', function (req, res, next) {
-    if (req.query.division && req.query.location) {
-        
+    if (req.query.division && req.query.location && req.query.field && req.query.sort) {
+        getDivisionLocationFieldSortPosts(req.query.division, req.query.location, req.query.field, req.query.sort)
+            .then((data) => {
+                res.status(data[0]).send(data[1]);
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+            });
     }
-    else if(req.query.division){
-
-    }else if(req.query.location){
-
+    else if (req.query.division && req.query.location && req.query.field) {
+        getDivisionLocationFieldPosts(req.query.division, req.query.location, req.query.field)
+            .then((data) => {
+                res.status(data[0]).send(data[1]);
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+            });
+    } else if (req.query.division && req.query.location && req.query.sort) {
+        getDivisionLocationSortPosts(req.query.division, req.query.location, req.query.sort)
+            .then((data) => {
+                res.status(data[0]).send(data[1]);
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+            });
+    } else if (req.query.division && req.query.field && req.query.sort) {
+        getDivisionFieldSortPosts(req.query.division, req.query.field, req.query.sort)
+            .then((data) => {
+                res.status(data[0]).send(data[1]);
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+            });
+    } else if (req.query.division && req.query.location) {
+        getDivisionLocationPosts(req.query.division, req.query.location)
+            .then((data) => {
+                res.status(data[0]).send(data[1]);
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+            });
+    } else if (req.query.division && req.query.field) {
+        getDivisionFieldPosts(req.query.division, req.query.field)
+            .then((data) => {
+                res.status(data[0]).send(data[1]);
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+            });
+    } else if (req.query.division && req.query.sort) {
+        getDivisionSortPosts(req.query.division, req.query.sort)
+            .then((data) => {
+                res.status(data[0]).send(data[1]);
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+            });
+    } else if (req.query.division) {
+        getDivisionPosts(req.query.division)
+            .then((data) => {
+                res.status(data[0]).send(data[1]);
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+            });
     }
     else {
         getAllPosts()

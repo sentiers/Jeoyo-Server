@@ -13,7 +13,7 @@ var userDataSchema = new Schema({
     user_education: String, // 학교
     user_major: String, // 전공
     user_location: [], // 위치
-    user_field: [], // 관심분야
+    user_field: [], // 관심직무
     user_email: String, // 이메일
     user_introduction: String, // 소개
     user_history: [], // 활동 이력

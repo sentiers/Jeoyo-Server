@@ -71,8 +71,13 @@ router.get('/:id', function (req, res, next) {
 
 //==== GET 게시물 필터링 =============================
 router.get('/', function (req, res, next) {
-    if (req.query.division) {
-        console.log(req.query.division);
+    if (req.query.division && req.query.location) {
+        
+    }
+    else if(req.query.division){
+
+    }else if(req.query.location){
+
     }
     else {
         getAllPosts()

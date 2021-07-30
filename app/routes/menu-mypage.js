@@ -21,21 +21,15 @@ function getMyInfo(email) {
 //==== 내가 올린 모집글 데이터들 가져오기 =========================
 function getMyPosts(email) {
     return new Promise(function (resolve, reject) {
-        UserData.findOne({
-            user_email: email
-        }).then(user => {
-            Post.find({
-                post_user_id: user.id
-            }).then(data => {
-                if (data.length == 0) {
-                    reject(404);
-                } else {
-                    resolve([200, data]);
-                }
-            })
-        }).catch((err) => {
-            reject(401);
-        });
+        Post.find({
+            post_user_email: email
+        }).then(data => {
+            if (data.length == 0) {
+                reject(404);
+            } else {
+                resolve([200, data]);
+            }
+        })
     });
 };
 

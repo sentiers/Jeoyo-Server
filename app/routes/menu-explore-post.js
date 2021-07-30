@@ -40,13 +40,14 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
 //==== 게시물 구분 & 지역 & 분야 필터=========================
 function getDivisionLocationFieldPosts(division, location, field) {
     return new Promise(function (resolve, reject) {
-        UserData.find(
+        Post.find(
             {
-                user_location: { $elemMatch: { $eq: location } },
-                user_field: { $elemMatch: { $eq: field } }
+                post_division: division,
+                post_location: { $elemMatch: { $eq: location } },
+                post_field: field
             }
-        ).then(user => {
-            resolve([200, user]);
+        ).then(post => {
+            resolve([200, post]);
         }).catch((err) => {
             reject(401);
         });
@@ -56,13 +57,13 @@ function getDivisionLocationFieldPosts(division, location, field) {
 //==== 게시물 구분 & 지역 & 정렬 필터=========================
 function getDivisionLocationSortPosts(division, location, sort) {
     return new Promise(function (resolve, reject) {
-        UserData.find(
+        Post.find(
             {
-                user_location: { $elemMatch: { $eq: location } },
-                user_field: { $elemMatch: { $eq: field } }
+                post_division: division,
+                post_location: { $elemMatch: { $eq: location } }
             }
-        ).then(user => {
-            resolve([200, user]);
+        ).then(post => {
+            resolve([200, post]);
         }).catch((err) => {
             reject(401);
         });
@@ -72,13 +73,13 @@ function getDivisionLocationSortPosts(division, location, sort) {
 //==== 게시물 구분 & 분야 & 정렬 필터=========================
 function getDivisionFieldSortPosts(division, field, sort) {
     return new Promise(function (resolve, reject) {
-        UserData.find(
+        Post.find(
             {
-                user_location: { $elemMatch: { $eq: location } },
-                user_field: { $elemMatch: { $eq: field } }
+                post_division: division,
+                post_field: field
             }
-        ).then(user => {
-            resolve([200, user]);
+        ).then(post => {
+            resolve([200, post]);
         }).catch((err) => {
             reject(401);
         });
@@ -88,13 +89,13 @@ function getDivisionFieldSortPosts(division, field, sort) {
 //==== 게시물 구분 & 지역 필터=========================
 function getDivisionLocationPosts(division, location) {
     return new Promise(function (resolve, reject) {
-        UserData.find(
+        Post.find(
             {
-                user_location: { $elemMatch: { $eq: location } },
-                user_field: { $elemMatch: { $eq: field } }
+                post_division: division,
+                post_location: { $elemMatch: { $eq: location } },
             }
-        ).then(user => {
-            resolve([200, user]);
+        ).then(post => {
+            resolve([200, post]);
         }).catch((err) => {
             reject(401);
         });
@@ -104,13 +105,13 @@ function getDivisionLocationPosts(division, location) {
 //==== 게시물 구분 & 분야 필터=========================
 function getDivisionFieldPosts(division, field) {
     return new Promise(function (resolve, reject) {
-        UserData.find(
+        Post.find(
             {
-                user_location: { $elemMatch: { $eq: location } },
-                user_field: { $elemMatch: { $eq: field } }
+                post_division: division,
+                post_field: field
             }
-        ).then(user => {
-            resolve([200, user]);
+        ).then(post => {
+            resolve([200, post]);
         }).catch((err) => {
             reject(401);
         });
@@ -120,13 +121,12 @@ function getDivisionFieldPosts(division, field) {
 //==== 게시물 구분 & 정렬 필터=========================
 function getDivisionSortPosts(division, sort) {
     return new Promise(function (resolve, reject) {
-        UserData.find(
+        Post.find(
             {
-                user_location: { $elemMatch: { $eq: location } },
-                user_field: { $elemMatch: { $eq: field } }
+                post_division: division
             }
-        ).then(user => {
-            resolve([200, user]);
+        ).then(post => {
+            resolve([200, post]);
         }).catch((err) => {
             reject(401);
         });
@@ -136,13 +136,12 @@ function getDivisionSortPosts(division, sort) {
 //==== 게시물 구분 필터=========================
 function getDivisionPosts(division) {
     return new Promise(function (resolve, reject) {
-        UserData.find(
+        Post.find(
             {
-                user_location: { $elemMatch: { $eq: location } },
-                user_field: { $elemMatch: { $eq: field } }
+                post_division: division
             }
-        ).then(user => {
-            resolve([200, user]);
+        ).then(post => {
+            resolve([200, post]);
         }).catch((err) => {
             reject(401);
         });
@@ -161,6 +160,29 @@ function getAllPosts() {
     });
 };
 
+//==== 게시물 삭제하기 =========================
+function deletePostById(email, idData) {
+    return new Promise(function (resolve, reject) {
+        Post.findOne({
+            _id: idData
+        }).then(post => {
+            if (post.post_user_email == email) {
+                Post.deleteOne({
+                    _id: idData
+                }).then(() => {
+                    resolve([200, post]);
+                }).catch(() => {
+                    reject(500);
+                });
+            } else {
+                reject(403);
+            }
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
 
 //==== 게시물 생성 =========================
 function createPost(email, data) {
@@ -170,7 +192,7 @@ function createPost(email, data) {
             user_email: email
         }).then(user => {
             newPost.post_location = user.user_location;
-            newPost.post_user_id = user.id;
+            newPost.post_user_email = user.user_email;
             newPost.post_user_name = user.user_name;
             newPost.post_recruit_start = moment().format('YYYY-MM-DD');
             newPost.post_created_at = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -184,6 +206,13 @@ function createPost(email, data) {
         }).catch((err) => {
             reject(401);
         });
+    });
+};
+
+//==== 게시물 수정 =========================
+function updatePost(email, idData, data) {
+    return new Promise(function (resolve, reject) {
+
     });
 };
 
@@ -269,15 +298,34 @@ router.get('/', function (req, res, next) {
     }
 });
 
+//==== GET 게시물 삭제하기 =============================
+router.get('/delete/:id', function (req, res, next) {
+    deletePostById(req.user.user_email, req.params.id)
+        .then((code) => {
+            res.status(code).send("게시물 삭제 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 게시물 삭제 실패");
+        });
+});
+
 //==== POST 게시물 만들기 =============================
 router.post('/create', function (req, res, next) {
     createPost(req.user.user_email, req.body)
         .then((code) => {
-            res.status(code).send(code + ": 게시물 생성 완료");
+            res.status(code).send(code + ": 게시물 생성 성공");
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 게시물 생성 실패");
         });
 });
 
+//==== POST 게시물 수정하기 =============================
+router.post('/update/:id', function (req, res, next) {
+    updatePost(req.user.user_email, req.params.id, req.body)
+        .then((code) => {
+            res.status(code).send(code + ": 게시물 수정 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 게시물 수정 실패");
+        });
+});
 
 module.exports = router;

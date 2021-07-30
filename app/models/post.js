@@ -16,7 +16,7 @@ var PostSchema = new Schema({
     },
     post_location: [],
     post_meeting: String, // 활동 빈도
-    post_user_id: String, // 게시자 아이디
+    post_user_email: String, // 게시자 아이디
     post_user_img: String, // 게시자 이미지
     post_user_name: String, // 게시자 이름
     post_introduction: String, // 게시물 소개

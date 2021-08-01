@@ -15,7 +15,7 @@ function getUserById(idData) {
         }).then(post => {
             resolve([200, post]);
         }).catch((err) => {
-            reject(401);
+            reject(404);
         });
     });
 };
@@ -31,7 +31,7 @@ function getLocationFieldUsers(location, field) {
         ).then(user => {
             resolve([200, user]);
         }).catch((err) => {
-            reject(401);
+            reject(404);
         });
     });
 };
@@ -46,7 +46,7 @@ function getLocationUsers(location) {
         ).then(user => {
             resolve([200, user]);
         }).catch((err) => {
-            reject(401);
+            reject(404);
         });
     });
 };
@@ -61,7 +61,7 @@ function getFieldUsers(field) {
         ).then(user => {
             resolve([200, user]);
         }).catch((err) => {
-            reject(401);
+            reject(404);
         });
     });
 };
@@ -73,7 +73,7 @@ function getAllUsers() {
             .then(user => {
                 resolve([200, user]);
             }).catch((err) => {
-                reject(401);
+                reject(404);
             });
     });
 };

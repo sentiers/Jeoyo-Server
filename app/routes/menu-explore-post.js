@@ -15,7 +15,7 @@ function getPostById(idData) {
         }).then(post => {
             resolve([200, post]);
         }).catch((err) => {
-            reject(401);
+            reject(404);
         });
     });
 };
@@ -23,17 +23,43 @@ function getPostById(idData) {
 //==== 게시물 구분 & 지역 & 분야 & 정렬 필터=========================
 function getDivisionLocationFieldSortPosts(division, location, field, sort) {
     return new Promise(function (resolve, reject) {
-        Post.find(
-            {
-                post_division: division,
-                post_location: { $elemMatch: { $eq: location } },
-                post_field: field
-            }
-        ).then(post => {
-            resolve([200, post]);
-        }).catch((err) => {
-            reject(401);
-        });
+        if (sort == "인기순") {
+            Post.find(
+                {
+                    post_division: division,
+                    post_location: { $elemMatch: { $eq: location } },
+                    post_field: field
+                }
+            ).sort({ "post_popularity": 1 }).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(404);
+            });
+        } else if (sort == "모집마감순") {
+            Post.find(
+                {
+                    post_division: division,
+                    post_location: { $elemMatch: { $eq: location } },
+                    post_field: field
+                }
+            ).sort({ "post_recuit_end": 1 }).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(404);
+            });
+        } else {
+            Post.find(
+                {
+                    post_division: division,
+                    post_location: { $elemMatch: { $eq: location } },
+                    post_field: field
+                }
+            ).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(404);
+            });
+        }
     });
 };
 
@@ -49,7 +75,7 @@ function getDivisionLocationFieldPosts(division, location, field) {
         ).then(post => {
             resolve([200, post]);
         }).catch((err) => {
-            reject(401);
+            reject(404);
         });
     });
 };
@@ -57,32 +83,45 @@ function getDivisionLocationFieldPosts(division, location, field) {
 //==== 게시물 구분 & 지역 & 정렬 필터=========================
 function getDivisionLocationSortPosts(division, location, sort) {
     return new Promise(function (resolve, reject) {
-        Post.find(
-            {
-                post_division: division,
-                post_location: { $elemMatch: { $eq: location } }
-            }
-        ).then(post => {
-            resolve([200, post]);
-        }).catch((err) => {
-            reject(401);
-        });
+        if (sort == "인기순") {
+
+        } else if (sort == "모집마감순") {
+
+        } else {
+            Post.find(
+                {
+                    post_division: division,
+                    post_location: { $elemMatch: { $eq: location } }
+                }
+            ).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(404);
+            });
+        }
+
     });
 };
 
 //==== 게시물 구분 & 분야 & 정렬 필터=========================
 function getDivisionFieldSortPosts(division, field, sort) {
     return new Promise(function (resolve, reject) {
-        Post.find(
-            {
-                post_division: division,
-                post_field: field
-            }
-        ).then(post => {
-            resolve([200, post]);
-        }).catch((err) => {
-            reject(401);
-        });
+        if (sort == "인기순") {
+
+        } else if (sort == "모집마감순") {
+
+        } else {
+            Post.find(
+                {
+                    post_division: division,
+                    post_field: field
+                }
+            ).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(404);
+            });
+        }
     });
 };
 
@@ -97,7 +136,7 @@ function getDivisionLocationPosts(division, location) {
         ).then(post => {
             resolve([200, post]);
         }).catch((err) => {
-            reject(401);
+            reject(404);
         });
     });
 };
@@ -113,7 +152,7 @@ function getDivisionFieldPosts(division, field) {
         ).then(post => {
             resolve([200, post]);
         }).catch((err) => {
-            reject(401);
+            reject(404);
         });
     });
 };
@@ -121,15 +160,21 @@ function getDivisionFieldPosts(division, field) {
 //==== 게시물 구분 & 정렬 필터=========================
 function getDivisionSortPosts(division, sort) {
     return new Promise(function (resolve, reject) {
-        Post.find(
-            {
-                post_division: division
-            }
-        ).then(post => {
-            resolve([200, post]);
-        }).catch((err) => {
-            reject(401);
-        });
+        if (sort == "인기순") {
+
+        } else if (sort == "모집마감순") {
+
+        } else {
+            Post.find(
+                {
+                    post_division: division
+                }
+            ).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(404);
+            });
+        }
     });
 };
 
@@ -143,7 +188,7 @@ function getDivisionPosts(division) {
         ).then(post => {
             resolve([200, post]);
         }).catch((err) => {
-            reject(401);
+            reject(404);
         });
     });
 };
@@ -155,7 +200,7 @@ function getAllPosts() {
             .then(data => {
                 resolve([200, data]);
             }).catch((err) => {
-                reject(401);
+                reject(404);
             });
     });
 };
@@ -178,7 +223,7 @@ function deletePostById(email, idData) {
                 reject(403);
             }
         }).catch((err) => {
-            reject(401);
+            reject(404);
         });
     });
 };
@@ -212,7 +257,46 @@ function createPost(email, data) {
 //==== 게시물 수정 =========================
 function updatePost(email, idData, data) {
     return new Promise(function (resolve, reject) {
-
+        UserData.findOne({ user_email: email })
+            .then(user => {
+                Post.findOne({
+                    _id: idData
+                }).then(post => {
+                    if (post.post_user_email == email) {
+                        Post.updateOne(
+                            { _id: idData },
+                            {
+                                $set: {
+                                    'post_division': data.post_division,
+                                    'post_field': data.post_field,
+                                    'post_title': data.post_title,
+                                    'post_recruit_end': data.post_recruit_end,
+                                    'post_requirements.status': data.post_requirements.status,
+                                    'post_requirements.field': data.post_requirements.field,
+                                    'post_requirements.headcount': data.post_requirements.headcount,
+                                    'post_location': user.user_location,
+                                    'post_meeting': data.post_meeting,
+                                    'post_user_name': user.user_name,
+                                    'post_introduction': data.post_introduction,
+                                    'post_plan': data.post_plan,
+                                    'post_preference': data.post_preference,
+                                    'post_detailed': data.post_detailed,
+                                    'post_updated_at': moment().format('YYYY-MM-DD HH:mm:ss')
+                                }
+                            }).then(() => {
+                                resolve([200, post]);
+                            }).catch(() => {
+                                reject(500);
+                            });
+                    } else {
+                        reject(403);
+                    }
+                }).catch((err) => {
+                    reject(404);
+                });
+            }).catch((err) => {
+                reject(401);
+            });
     });
 };
 

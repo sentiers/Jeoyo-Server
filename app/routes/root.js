@@ -42,6 +42,12 @@ router.get('/401', function (req, res, next) {
 // 필터링할때
 // /people - query string - req.query.vin
 
+// 유저못찾으면 401
+// 요청성공 200
+// 새로 생성된거면 201
+// 수정삭제 본인아니면 403
+// 게시물이나 유저 조회안되면 404
+// 
 
 
 module.exports = router;

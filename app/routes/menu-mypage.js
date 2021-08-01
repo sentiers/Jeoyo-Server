@@ -24,12 +24,10 @@ function getMyPosts(email) {
         Post.find({
             post_user_email: email
         }).then(data => {
-            if (data.length == 0) {
-                reject(404);
-            } else {
-                resolve([200, data]);
-            }
-        })
+            resolve([200, data]);
+        }).catch((err) => {
+            reject(404);
+        });
     });
 };
 

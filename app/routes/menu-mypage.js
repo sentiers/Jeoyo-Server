@@ -26,7 +26,7 @@ function getMyPosts(email) {
         }).then(data => {
             resolve([200, data]);
         }).catch((err) => {
-            reject(404);
+            reject(500);
         });
     });
 };

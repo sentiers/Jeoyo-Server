@@ -33,7 +33,7 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
             ).sort({ "post_popularity": 1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
-                reject(404);
+                reject(500);
             });
         } else if (sort == "모집마감순") {
             Post.find(
@@ -45,7 +45,7 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
             ).sort({ "post_recuit_end": 1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
-                reject(404);
+                reject(500);
             });
         } else {
             Post.find(
@@ -57,7 +57,7 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
             ).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
-                reject(404);
+                reject(500);
             });
         }
     });
@@ -75,7 +75,7 @@ function getDivisionLocationFieldPosts(division, location, field) {
         ).then(post => {
             resolve([200, post]);
         }).catch((err) => {
-            reject(404);
+            reject(500);
         });
     });
 };
@@ -96,7 +96,7 @@ function getDivisionLocationSortPosts(division, location, sort) {
             ).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
-                reject(404);
+                reject(500);
             });
         }
 
@@ -119,7 +119,7 @@ function getDivisionFieldSortPosts(division, field, sort) {
             ).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
-                reject(404);
+                reject(500);
             });
         }
     });
@@ -136,7 +136,7 @@ function getDivisionLocationPosts(division, location) {
         ).then(post => {
             resolve([200, post]);
         }).catch((err) => {
-            reject(404);
+            reject(500);
         });
     });
 };
@@ -152,7 +152,7 @@ function getDivisionFieldPosts(division, field) {
         ).then(post => {
             resolve([200, post]);
         }).catch((err) => {
-            reject(404);
+            reject(500);
         });
     });
 };
@@ -172,7 +172,7 @@ function getDivisionSortPosts(division, sort) {
             ).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
-                reject(404);
+                reject(500);
             });
         }
     });
@@ -188,7 +188,7 @@ function getDivisionPosts(division) {
         ).then(post => {
             resolve([200, post]);
         }).catch((err) => {
-            reject(404);
+            reject(500);
         });
     });
 };
@@ -200,7 +200,7 @@ function getAllPosts() {
             .then(data => {
                 resolve([200, data]);
             }).catch((err) => {
-                reject(404);
+                reject(500);
             });
     });
 };

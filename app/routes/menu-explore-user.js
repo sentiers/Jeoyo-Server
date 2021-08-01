@@ -31,7 +31,7 @@ function getLocationFieldUsers(location, field) {
         ).then(user => {
             resolve([200, user]);
         }).catch((err) => {
-            reject(404);
+            reject(500);
         });
     });
 };
@@ -46,7 +46,7 @@ function getLocationUsers(location) {
         ).then(user => {
             resolve([200, user]);
         }).catch((err) => {
-            reject(404);
+            reject(500);
         });
     });
 };
@@ -61,7 +61,7 @@ function getFieldUsers(field) {
         ).then(user => {
             resolve([200, user]);
         }).catch((err) => {
-            reject(404);
+            reject(500);
         });
     });
 };
@@ -73,7 +73,7 @@ function getAllUsers() {
             .then(user => {
                 resolve([200, user]);
             }).catch((err) => {
-                reject(404);
+                reject(500);
             });
     });
 };

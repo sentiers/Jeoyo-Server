@@ -59,7 +59,8 @@ function IncView(idData) {
             { _id: idData },
             {
                 $inc: {
-                    'post_popularity': 1
+                    'post_popularity': 1,
+                    'post_view': 1
                 }
             }
         ).then(() => {

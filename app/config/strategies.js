@@ -1,14 +1,14 @@
 var passport = require('passport');
 var passportJWT = require("passport-jwt");
 
-var ExtractJWT = passportJWT.ExtractJwt;
+
 
 var LocalStrategy = require('passport-local').Strategy;
 var JWTStrategy = passportJWT.Strategy;
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var bcrypt = require('bcryptjs');
 var User = require('../models/user');
-
+var ExtractJWT = passportJWT.ExtractJwt;
 module.exports = function (passport) {
 
     passport.use(
@@ -36,7 +36,7 @@ module.exports = function (passport) {
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey: '2021jeoyoapp2021'
     }, function (jwtPayload, done) {
-        return User.findOne(jwtPayload.id)
+        return User.findOne({ _id: jwtPayload._id })
             .then(user => {
                 return done(null, user);
             })

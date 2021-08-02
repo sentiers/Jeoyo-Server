@@ -25,6 +25,7 @@ var PostSchema = new Schema({
     post_detailed: String, // 세부 룰
     post_created_at: Date, // 게시물 생성시점 YYYY-MM-DD HH:mm:ss
     post_updated_at: Date, // 게시물 수정시점 YYYY-MM-DD HH:mm:ss
+    post_view: Number,
     post_popularity: Number // 게시물 인기도
 });
 

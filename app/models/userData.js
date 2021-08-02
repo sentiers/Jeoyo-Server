@@ -30,10 +30,9 @@ var userDataSchema = new Schema({
     user_likedPosts: [], // 관심 프로젝트
     user_selection: { // 설문조사 결과
         q1: String, // 처음팀원들과 만나는 자리
-        q2: String, // 애인질문
-        q3: String, // 3일전 아이디어엎어짐
-        q4: String, // 두 팀원 말다툼
-        q5: String // 내 의견에 반대의견
+        q2: String, // 3일전 아이디어엎어짐
+        q3: String, // 두 팀원 말다툼
+        q4: String // 내 의견에 반대의견
     },
     user_agreement: {
         agreement_m: { // (필수) 이용약관 동의여부 (0:비동의 1:동의)
@@ -43,7 +42,8 @@ var userDataSchema = new Schema({
         info_m: Number, // (필수) 개인정보
         info_c: Number, // (선택) 개인정보
         marketing_c: Number, // (선택) 마케팅
-    }
+    }, 
+    user_recent_posts: [] // 최근 본 프로젝트
 });
 
 var UserData = mongoose.model('UserDatas', userDataSchema);

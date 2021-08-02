@@ -7,8 +7,8 @@ var PostSchema = new Schema({
     post_field: String, // 게시물 분야 (광고냐 프로그래밍이냐 등)
     post_img: String, // 게시물 이미지
     post_title: String, // 게시물 제목
-    post_recruit_start: String, // 모집기간 시작일 YYYY-MM-DD
-    post_recruit_end: String, // 모집기간 마감일 YYYY-MM-DD
+    post_recruit_start: Date, // 모집기간 시작일 YYYY-MM-DD
+    post_recruit_end: Date, // 모집기간 마감일 YYYY-MM-DD
     post_requirements: { // 희망 팀원 조건
         status: String, // 상태(재학중, 졸업 등)
         field: [],       // 직무
@@ -23,8 +23,9 @@ var PostSchema = new Schema({
     post_plan: String, // 진행 및 방향성
     post_preference: String, // 우대사항
     post_detailed: String, // 세부 룰
-    post_created_at: String, // 게시물 생성시점 YYYY-MM-DD HH:mm:ss
-    post_updated_at: String // 게시물 수정시점 YYYY-MM-DD HH:mm:ss
+    post_created_at: Date, // 게시물 생성시점 YYYY-MM-DD HH:mm:ss
+    post_updated_at: Date, // 게시물 수정시점 YYYY-MM-DD HH:mm:ss
+    post_popularity: Number // 게시물 인기도
 });
 
 var Post = mongoose.model('Posts', PostSchema);

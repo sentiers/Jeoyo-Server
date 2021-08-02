@@ -7,13 +7,63 @@ const { post } = require('./menu-home');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 // ----------------------------------------------------------------
+
+function getCurrentDate() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var today = date.getDate();
+    return new Date(Date.UTC(year, month, today));
+};
+
+function getCurrentDateTime() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var today = date.getDate();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+    var milliseconds = date.getMilliseconds();
+    return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
+};
+
 //==== 게시물 id 별로 조회 =========================
-function getPostById(idData) {
+function getPostById(email, idData) {
     return new Promise(function (resolve, reject) {
         Post.findOne({
             _id: idData
         }).then(post => {
-            resolve([200, post]);
+            UserData.updateOne(
+                { user_email: email },
+                {
+                    $push: {
+                        'user_recent_posts': post._id
+                    }
+                }
+            ).then(() => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(401);
+            });
+        }).catch((err) => {
+            reject(404);
+        });
+    });
+};
+
+//==== 게시물 조회수올리는 함수 =========================
+function IncView(idData) {
+    return new Promise(function (resolve, reject) {
+        Post.updateOne(
+            { _id: idData },
+            {
+                $inc: {
+                    'post_popularity': 1
+                }
+            }
+        ).then(() => {
+            resolve();
         }).catch((err) => {
             reject(404);
         });
@@ -84,9 +134,27 @@ function getDivisionLocationFieldPosts(division, location, field) {
 function getDivisionLocationSortPosts(division, location, sort) {
     return new Promise(function (resolve, reject) {
         if (sort == "인기순") {
-
+            Post.find(
+                {
+                    post_division: division,
+                    post_location: { $elemMatch: { $eq: location } }
+                }
+            ).sort({ "post_popularity": 1 }).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(500);
+            });
         } else if (sort == "모집마감순") {
-
+            Post.find(
+                {
+                    post_division: division,
+                    post_location: { $elemMatch: { $eq: location } }
+                }
+            ).sort({ "post_recuit_end": 1 }).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(500);
+            });
         } else {
             Post.find(
                 {
@@ -107,9 +175,27 @@ function getDivisionLocationSortPosts(division, location, sort) {
 function getDivisionFieldSortPosts(division, field, sort) {
     return new Promise(function (resolve, reject) {
         if (sort == "인기순") {
-
+            Post.find(
+                {
+                    post_division: division,
+                    post_field: field
+                }
+            ).sort({ "post_popularity": 1 }).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(500);
+            });
         } else if (sort == "모집마감순") {
-
+            Post.find(
+                {
+                    post_division: division,
+                    post_field: field
+                }
+            ).sort({ "post_recuit_end": 1 }).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(500);
+            });
         } else {
             Post.find(
                 {
@@ -161,9 +247,25 @@ function getDivisionFieldPosts(division, field) {
 function getDivisionSortPosts(division, sort) {
     return new Promise(function (resolve, reject) {
         if (sort == "인기순") {
-
+            Post.find(
+                {
+                    post_division: division
+                }
+            ).sort({ "post_popularity": 1 }).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(500);
+            });
         } else if (sort == "모집마감순") {
-
+            Post.find(
+                {
+                    post_division: division
+                }
+            ).sort({ "post_recuit_end": 1 }).then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(500);
+            });
         } else {
             Post.find(
                 {
@@ -239,8 +341,8 @@ function createPost(email, data) {
             newPost.post_location = user.user_location;
             newPost.post_user_email = user.user_email;
             newPost.post_user_name = user.user_name;
-            newPost.post_recruit_start = moment().format('YYYY-MM-DD');
-            newPost.post_created_at = moment().format('YYYY-MM-DD HH:mm:ss');
+            newPost.post_recruit_start = getCurrentDate();
+            newPost.post_created_at = getCurrentDateTime();
             newPost.save((err) => {
                 if (err) {
                     reject(500);
@@ -281,7 +383,7 @@ function updatePost(email, idData, data) {
                                     'post_plan': data.post_plan,
                                     'post_preference': data.post_preference,
                                     'post_detailed': data.post_detailed,
-                                    'post_updated_at': moment().format('YYYY-MM-DD HH:mm:ss')
+                                    'post_updated_at': getCurrentDateTime()
                                 }
                             }).then(() => {
                                 resolve([200, post]);
@@ -304,12 +406,16 @@ function updatePost(email, idData, data) {
 
 //==== GET 게시물 id 별로 하나 가져오기 =============================
 router.get('/:id', function (req, res, next) {
-    getPostById(req.params.id)
-        .then((data) => {
-            res.status(data[0]).send(data[1]);
-        }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
-        });
+    IncView(req.params.id).then(() => {
+        getPostById(req.user.user_email, req.params.id)
+            .then((data) => {
+                res.status(data[0]).send(data[1]);
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+            });
+    }).catch((errcode) => {
+        res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+    });
 });
 
 //==== GET 게시물 필터링 =============================

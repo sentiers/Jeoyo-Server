@@ -6,6 +6,7 @@ var moment = require('moment');
 const { post } = require('./menu-home');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
+var ObjectId = require('mongodb').ObjectID;
 // ----------------------------------------------------------------
 
 function getCurrentDate() {
@@ -38,32 +39,33 @@ function getPostById(email, idData) {
                 resolve([200, post]);
             }
             else {
-                UserData.findOne({ user_email: email })
-                    .then((user) => {
-                        if (user.user_recent_posts[0] == idData) {
-                            resolve([200, post]);
-                        } else {
-                            UserData.updateOne(
-                                { user_email: email },
-                                {
-                                    $push: {
-                                        'user_recent_posts': {
-                                            $each: [post._id],
-                                            $position: 0
-                                        }
-                                    }
+                UserData.updateOne(
+                    { user_email: email },
+                    {
+                        $pull: { 'user_recent_posts': ObjectId(idData) }
+                    }
+                ).then(() => {
+                    UserData.updateOne(
+                        { user_email: email },
+                        {
+                            $push: {
+                                'user_recent_posts': {
+                                    $each: [post._id],
+                                    $position: 0
                                 }
-                            ).then(() => {
-                                resolve([200, post]);
-                            }).catch((err) => {
-                                reject(401);
-                            });
+                            }
                         }
+                    ).then(() => {
+                        resolve([200, post]);
                     }).catch((err) => {
                         reject(401);
                     });
+                }).catch((err) => {
+                    reject(401);
+                });
             }
         }).catch((err) => {
+            console.log(err);
             reject(404);
         });
     });

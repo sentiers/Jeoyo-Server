@@ -22,6 +22,7 @@ function getRecentViewProjects(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({ user_email: email })
             .then((user) => {
+                console.log(user);
                 Post.aggregate([
                     {
                         "$match": {
@@ -41,15 +42,15 @@ function getRecentViewProjects(email) {
                     {
                         "$sort": { "order": 1 }
                     }
-                ]).then((posts) => {
-                    resolve([200, posts]);
-                }).catch((err) => {
-                    reject(500);
-                });
+                ]).limit(10)
+                    .then((posts) => {
+                        resolve([200, posts]);
+                    }).catch((err) => {
+                        reject(500);
+                    });
             }).catch((err) => {
                 reject(401);
             });
-
     });
 };
 

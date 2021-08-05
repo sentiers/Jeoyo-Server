@@ -8,12 +8,13 @@ var delay = require('delay');
 //==== 인기있는 프로젝트 =========================
 function getPopularProjects() {
     return new Promise(function (resolve, reject) {
-        // 인기 있는 프로젝트 어떻게?
-        Post.find().sort({ "post_popularity": 1 }).then(post => {
-            resolve([200, post]);
-        }).catch((err) => {
-            reject(500);
-        });
+        Post.find().sort({ "post_popularity": 1 })
+            .limit(10)
+            .then(post => {
+                resolve([200, post]);
+            }).catch((err) => {
+                reject(500);
+            });
     });
 };
 
@@ -22,7 +23,6 @@ function getRecentViewProjects(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({ user_email: email })
             .then((user) => {
-                console.log(user);
                 Post.aggregate([
                     {
                         "$match": {
@@ -59,12 +59,16 @@ function getRecentViewProjects(email) {
 //==== GET 탐색 화면 =============================
 router.get('/', function (req, res, next) {
     getRecentViewProjects(req.user.user_email)
-        .then((data) => {
-            res.status(data[0]).send(data[1]);
+        .then((recent) => {
+            getPopularProjects().then((popular) => {
+                res.status(popular[0]).send({ popularProjects: popular[1], recentProjects: recent[1] });
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 탐색화면 데이터를 가져오지 못하였습니다");
+            });
+
         }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 에러");
+            res.status(errcode).send(errcode + ": 탐색화면 데이터를 가져오지 못하였습니다");
         });
 });
-
 
 module.exports = router;

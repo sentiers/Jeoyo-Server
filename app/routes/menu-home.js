@@ -18,6 +18,8 @@ function getHomeProjects() {
 function getHomeUsers() {
     return new Promise(function (resolve, reject) {
         // 같은지역 팀원 10명
+        //근처 유저 & 소개글까지 채워넣은 유저들을 랜덤으로 추천
+
     });
 };
 

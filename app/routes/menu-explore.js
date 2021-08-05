@@ -1,7 +1,5 @@
 //====HANDLE EXPLORE ROUTES =============
 var router = require('express').Router();
-
-var router = require('express').Router();
 var UserData = require('../models/userData');
 var Post = require('../models/post');
 var delay = require('delay');
@@ -22,28 +20,35 @@ function getPopularProjects() {
 //==== 최근 본 프로젝트 =========================
 function getRecentViewProjects(email) {
     return new Promise(function (resolve, reject) {
-        UserData.findOne({ user_email: email }).exec().then((user) => {
-
-            var recentViewPosts = async (user) => {
-                for (const postId of user.user_recent_posts) {
-                    await delay()
-                        .then(() => {
-                            Post.findOne({
-                                _id: postId
-                            }).then(post => {
-                                resolve([200, post]);
-                            }).catch((err) => {
-                                reject(404);
-                            });
-                        })
-                }
-            }
-            
-            recentViewPosts(user);
-
-        }).catch((err) => {
-            reject(401);
-        });
+        UserData.findOne({ user_email: email })
+            .then((user) => {
+                Post.aggregate([
+                    {
+                        "$match": {
+                            "_id": { "$in": user.user_recent_posts }
+                        }
+                    },
+                    {
+                        "$addFields": {
+                            "order": {
+                                "$indexOfArray": [
+                                    user.user_recent_posts,
+                                    "$_id"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "$sort": { "order": 1 }
+                    }
+                ]).then((posts) => {
+                    resolve([200, posts]);
+                }).catch((err) => {
+                    reject(500);
+                });
+            }).catch((err) => {
+                reject(401);
+            });
 
     });
 };

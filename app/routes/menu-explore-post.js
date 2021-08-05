@@ -34,18 +34,35 @@ function getPostById(email, idData) {
         Post.findOne({
             _id: idData
         }).then(post => {
-            UserData.updateOne(
-                { user_email: email },
-                {
-                    $push: {
-                        'user_recent_posts': post._id
-                    }
-                }
-            ).then(() => {
+            if (post.post_user_email == email) {
                 resolve([200, post]);
-            }).catch((err) => {
-                reject(401);
-            });
+            }
+            else {
+                UserData.findOne({ user_email: email })
+                    .then((user) => {
+                        if (user.user_recent_posts[0] == idData) {
+                            resolve([200, post]);
+                        } else {
+                            UserData.updateOne(
+                                { user_email: email },
+                                {
+                                    $push: {
+                                        'user_recent_posts': {
+                                            $each: [post._id],
+                                            $position: 0
+                                        }
+                                    }
+                                }
+                            ).then(() => {
+                                resolve([200, post]);
+                            }).catch((err) => {
+                                reject(401);
+                            });
+                        }
+                    }).catch((err) => {
+                        reject(401);
+                    });
+            }
         }).catch((err) => {
             reject(404);
         });
@@ -81,7 +98,7 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
                     post_location: { $elemMatch: { $eq: location } },
                     post_field: field
                 }
-            ).sort({ "post_popularity": 1 }).then(post => {
+            ).sort({ "post_popularity": -1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -93,7 +110,7 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
                     post_location: { $elemMatch: { $eq: location } },
                     post_field: field
                 }
-            ).sort({ "post_recuit_end": 1 }).then(post => {
+            ).sort({ "post_recruit_end": 1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -140,7 +157,7 @@ function getDivisionLocationSortPosts(division, location, sort) {
                     post_division: division,
                     post_location: { $elemMatch: { $eq: location } }
                 }
-            ).sort({ "post_popularity": 1 }).then(post => {
+            ).sort({ "post_popularity": -1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -151,7 +168,7 @@ function getDivisionLocationSortPosts(division, location, sort) {
                     post_division: division,
                     post_location: { $elemMatch: { $eq: location } }
                 }
-            ).sort({ "post_recuit_end": 1 }).then(post => {
+            ).sort({ "post_recruit_end": 1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -181,7 +198,7 @@ function getDivisionFieldSortPosts(division, field, sort) {
                     post_division: division,
                     post_field: field
                 }
-            ).sort({ "post_popularity": 1 }).then(post => {
+            ).sort({ "post_popularity": -1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -192,7 +209,7 @@ function getDivisionFieldSortPosts(division, field, sort) {
                     post_division: division,
                     post_field: field
                 }
-            ).sort({ "post_recuit_end": 1 }).then(post => {
+            ).sort({ "post_recruit_end": 1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -252,7 +269,7 @@ function getDivisionSortPosts(division, sort) {
                 {
                     post_division: division
                 }
-            ).sort({ "post_popularity": 1 }).then(post => {
+            ).sort({ "post_popularity": -1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -262,7 +279,8 @@ function getDivisionSortPosts(division, sort) {
                 {
                     post_division: division
                 }
-            ).sort({ "post_recuit_end": 1 }).then(post => {
+            ).sort({ "post_recruit_end": 1 }).then(post => {
+                console.log("하하");
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -318,7 +336,7 @@ function deletePostById(email, idData) {
                 Post.deleteOne({
                     _id: idData
                 }).then(() => {
-                    resolve([200, post]);
+                    resolve(200);
                 }).catch(() => {
                     reject(500);
                 });
@@ -387,7 +405,7 @@ function updatePost(email, idData, data) {
                                     'post_updated_at': getCurrentDateTime()
                                 }
                             }).then(() => {
-                                resolve([200, post]);
+                                resolve(200);
                             }).catch(() => {
                                 reject(500);
                             });
@@ -493,7 +511,7 @@ router.get('/', function (req, res, next) {
 router.get('/delete/:id', function (req, res, next) {
     deletePostById(req.user.user_email, req.params.id)
         .then((code) => {
-            res.status(code).send("게시물 삭제 성공");
+            res.status(code).send(code + "게시물 삭제 성공");
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 게시물 삭제 실패");
         });

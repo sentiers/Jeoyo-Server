@@ -14,10 +14,7 @@ var userDataSchema = new Schema({
     user_location: [], // 위치
     user_field: [], // 관심직무
     user_email: String, // 이메일
-    user_introduction: {// 소개
-        type: String,
-        default: ""
-    },
+    user_introduction: String, // 소개
     user_history: [], // 활동 이력
     user_evaluation: { // 받은 평가
         communicative: Number, // 소통이 원활해요
@@ -44,7 +41,7 @@ var userDataSchema = new Schema({
         info_m: Number, // (필수) 개인정보
         info_c: Number, // (선택) 개인정보
         marketing_c: Number, // (선택) 마케팅
-    },
+    }, 
     user_recent_posts: [] // 최근 본 프로젝트
 });
 

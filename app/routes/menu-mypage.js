@@ -119,8 +119,7 @@ function updateSurvey(email, data) {
                     'user_selection.q1': data.user_selection.q1,
                     'user_selection.q2': data.user_selection.q2,
                     'user_selection.q3': data.user_selection.q3,
-                    'user_selection.q4': data.user_selection.q4,
-                    'user_selection.q5': data.user_selection.q5,
+                    'user_selection.q4': data.user_selection.q4
                 }
             }
         ).then(() => {
@@ -131,7 +130,7 @@ function updateSurvey(email, data) {
     });
 };
 
-// 테스팅용 데이터보내는 함수 user_name = "keke"
+// 테스팅용 데이터보내는 함수
 function testing() {
     return new Promise(function (resolve, reject) {
         UserData.findOne({

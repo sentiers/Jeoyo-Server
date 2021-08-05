@@ -83,7 +83,7 @@ function IncView(idData) {
                 }
             }
         ).then(() => {
-            resolve();
+            resolve(200);
         }).catch((err) => {
             reject(404);
         });

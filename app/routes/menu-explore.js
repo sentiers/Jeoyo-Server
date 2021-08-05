@@ -65,7 +65,6 @@ router.get('/', function (req, res, next) {
             }).catch((errcode) => {
                 res.status(errcode).send(errcode + ": 탐색화면 데이터를 가져오지 못하였습니다");
             });
-
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 탐색화면 데이터를 가져오지 못하였습니다");
         });

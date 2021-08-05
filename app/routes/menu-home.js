@@ -49,7 +49,7 @@ function getNearUsers(email) {
             ]).then(users => {
                 resolve([200, users]);
             }).catch((err) => {
-                reject(401);
+                reject(500);
             });
         }).catch((err) => {
             reject(401);

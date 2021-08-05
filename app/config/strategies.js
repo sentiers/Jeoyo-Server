@@ -1,8 +1,6 @@
 var passport = require('passport');
 var passportJWT = require("passport-jwt");
 
-
-
 var LocalStrategy = require('passport-local').Strategy;
 var JWTStrategy = passportJWT.Strategy;
 var GoogleStrategy = require('passport-google-oauth20').Strategy;

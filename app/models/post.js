@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var PostSchema = new Schema({
-    //post_id: String,
     post_division: String, // 공모전인지 스터디인지 분류
     post_field: String, // 게시물 분야 (광고냐 프로그래밍이냐 등)
     post_img: String, // 게시물 이미지

@@ -9,7 +9,7 @@ var delay = require('delay');
 function getPopularProjects() {
     return new Promise(function (resolve, reject) {
         Post.find().sort({ "post_popularity": 1 })
-            .limit(10)
+            .limit(3)
             .then(post => {
                 resolve([200, post]);
             }).catch((err) => {
@@ -42,7 +42,7 @@ function getRecentViewProjects(email) {
                     {
                         "$sort": { "order": 1 }
                     }
-                ]).limit(10)
+                ]).limit(3)
                     .then((posts) => {
                         resolve([200, posts]);
                     }).catch((err) => {
@@ -61,7 +61,7 @@ router.get('/', function (req, res, next) {
     getRecentViewProjects(req.user.user_email)
         .then((recent) => {
             getPopularProjects().then((popular) => {
-                res.status(popular[0]).send({ popularProjects: popular[1], recentProjects: recent[1] });
+                res.status(popular[0]).send({ popularProjects: popular[1], recentViewProjects: recent[1] });
             }).catch((errcode) => {
                 res.status(errcode).send(errcode + ": 탐색화면 데이터를 가져오지 못하였습니다");
             });

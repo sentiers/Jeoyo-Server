@@ -6,19 +6,34 @@ var Post = require('../models/post');
 // ----------------------------------------------------------------
 
 //==== 프로젝트 최신 3개씩 =========================
-function getHomeProjects() {
+function getRecentProjects() {
     return new Promise(function (resolve, reject) {
-        // 공모전/대외활동  최신 3개
-        // 스터디  최신 3개
-        // 동아리  최신 3개
+        Post.find({ post_division: { $in: ["공모전", "대외활동"] } })
+            .limit(3).then((activity) => {
+                Post.find({ post_division: "스터디" })
+                    .limit(3).then((study) => {
+                        Post.find({ post_division: "동아리" })
+                            .limit(3).then((club) => {
+                                resolve([200, activity, study, club]);
+                            }).catch((err) => {
+                                reject(500);
+                            });
+                    }).catch((err) => {
+                        reject(500);
+                    });
+            }).catch((err) => {
+                reject(500);
+            });
+
     });
 };
 
 //==== 홈페이지 같은지역 유저 10명 =========================
-function getHomeUsers() {
+// 같은지역 팀원 10명
+//근처 유저 & 소개글까지 채워넣은 유저들을 랜덤으로 추천
+function getNearUsers(email) {
     return new Promise(function (resolve, reject) {
-        // 같은지역 팀원 10명
-        //근처 유저 & 소개글까지 채워넣은 유저들을 랜덤으로 추천
+        
 
     });
 };
@@ -27,7 +42,16 @@ function getHomeUsers() {
 
 //==== GET 홈페이지 화면 =============================
 router.get('/', function (req, res, next) {
-    
+    getNearUsers(req.user.user_email)
+        .then((users) => {
+            getRecentProjects().then((recent) => {
+                res.status(recent[0]).send({ activity: recent[1], study: recent[2], club: recent[3], users: users[1] });
+            }).catch((errcode) => {
+                res.status(errcode).send(errcode + ": 탐색화면 데이터를 가져오지 못하였습니다");
+            });
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 탐색화면 데이터를 가져오지 못하였습니다");
+        });
 
 
 });

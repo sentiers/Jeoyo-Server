@@ -29,12 +29,31 @@ function getRecentProjects() {
 };
 
 //==== 홈페이지 같은지역 유저 10명 =========================
-// 같은지역 팀원 10명
-//근처 유저 & 소개글까지 채워넣은 유저들을 랜덤으로 추천
 function getNearUsers(email) {
     return new Promise(function (resolve, reject) {
-        
-
+        UserData.findOne({
+            user_email: email
+        }).then(user => {
+            UserData.aggregate([
+                {
+                    "$match": {
+                        "$and": [
+                            { "user_location": { "$in": user.user_location } },
+                            { "user_email": { "$ne": user.user_email } }
+                        ]
+                    }
+                },
+                {
+                    "$sample": { size: 10 }
+                }
+            ]).then(users => {
+                resolve([200, users]);
+            }).catch((err) => {
+                reject(401);
+            });
+        }).catch((err) => {
+            reject(401);
+        });
     });
 };
 
@@ -47,13 +66,11 @@ router.get('/', function (req, res, next) {
             getRecentProjects().then((recent) => {
                 res.status(recent[0]).send({ activity: recent[1], study: recent[2], club: recent[3], users: users[1] });
             }).catch((errcode) => {
-                res.status(errcode).send(errcode + ": 탐색화면 데이터를 가져오지 못하였습니다");
+                res.status(errcode).send(errcode + ": 홈 화면 데이터를 가져오지 못하였습니다");
             });
         }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 탐색화면 데이터를 가져오지 못하였습니다");
+            res.status(errcode).send(errcode + ": 홈 화면 데이터를 가져오지 못하였습니다");
         });
-
-
 });
 
 

@@ -42,6 +42,25 @@ function registerUser(data) {
     });
 };
 
+//==== 회원탈퇴 =========================
+function deleteAccount(email) {
+    return new Promise(function (resolve, reject) {
+        UserData.deleteOne({
+            user_email: email
+        }).then(() => {
+            User.deleteOne({
+                user_email: email
+            }).then(() => {
+                resolve(200);
+            }).catch((err) => {
+                reject(500);
+            });
+        }).catch((err) => {
+            reject(500);
+        });
+    });
+};
+
 //==== 유저 설문조사 =========================
 function termsOfUse(email, data) {
     return new Promise(function (resolve, reject) {
@@ -149,6 +168,16 @@ router.get('/', passport.authenticate('jwt', { session: false }), function (req,
 router.get('/logout', passport.authenticate('jwt', { session: false }), function (req, res, next) {
     req.logout();
     res.status(200).send("200: 로그아웃 성공");
+});
+
+//==== GET 회원탈퇴 =============================
+router.get('/resignation', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+    deleteAccount(req.user.user_email)
+        .then((code) => {
+            res.status(code).send(code + ": 회원탈퇴 완료");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 회원탈퇴 실패");
+        });
 });
 
 //==== POST 회원가입 ============================

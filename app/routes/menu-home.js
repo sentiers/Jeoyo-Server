@@ -24,7 +24,6 @@ function getRecentProjects() {
             }).catch((err) => {
                 reject(500);
             });
-
     });
 };
 
@@ -32,7 +31,7 @@ function getRecentProjects() {
 function getNearUsers(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
-            user_email: email
+            user_email: "1234@naver.com"  // 테스팅일위한걸로 바꾼거임!!!!!!!!!!! //email
         }).then(user => {
             UserData.aggregate([
                 {

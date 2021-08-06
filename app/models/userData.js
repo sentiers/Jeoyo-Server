@@ -27,6 +27,7 @@ var userDataSchema = new Schema({
     user_projects: [], // 나의 프로젝트
     user_likedUsers: [], // 관심팀원
     user_likedPosts: [], // 관심 프로젝트
+    user_recent_posts: [], // 최근 본 프로젝트
     user_selection: { // 설문조사 결과
         q1: String, // 처음팀원들과 만나는 자리
         q2: String, // 3일전 아이디어엎어짐
@@ -42,7 +43,16 @@ var userDataSchema = new Schema({
         info_c: Number, // (선택) 개인정보
         marketing_c: Number, // (선택) 마케팅
     }, 
-    user_recent_posts: [] // 최근 본 프로젝트
+    user_active:{ 
+        profile: Number, // 프로필노출 (0:노출하지않음 1:노출함)
+        myType: Number, // 나의TYPE노출 (0:노출하지않음 1:노출함)
+        teamReview: Number // 팀원리뷰노출 (0:노출하지않음 1:노출함)
+    },
+    user_alarm:{
+        chat: Number, // 채팅알림 (0:알림끔 1:알림켬)
+        activity: Number, // 활동알림 (0:알림끔 1:알림켬)
+        marketing: Number // 마케팅알림 (0:알림끔 1:알림켬)
+    }
 });
 
 var UserData = mongoose.model('UserDatas', userDataSchema);

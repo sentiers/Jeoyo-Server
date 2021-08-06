@@ -31,7 +31,7 @@ function getRecentProjects() {
 function getNearUsers(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
-            user_email: "1234@naver.com"  // 테스팅일위한걸로 바꾼거임!!!!!!!!!!! //email
+            user_email: email 
         }).then(user => {
             UserData.aggregate([
                 {
@@ -60,7 +60,7 @@ function getNearUsers(email) {
 
 //==== GET 홈페이지 화면 =============================
 router.get('/', function (req, res, next) {
-    getNearUsers(req.user.user_email)
+    getNearUsers("1234@naver.com") // 테스팅일위한걸로 바꾼거임!!!!!!!!!!! //req.user.user_email
         .then((users) => {
             getRecentProjects().then((recent) => {
                 res.status(recent[0]).send({ activity: recent[1], study: recent[2], club: recent[3], users: users[1] });

@@ -35,10 +35,10 @@ require(path.join(__dirname, 'app', 'config', 'strategies'))(passport);
 app.use('/', root);
 app.use('/auth', auth);
 app.use('/chat', passport.authenticate('jwt', { session: false }), chat);
-app.use('/post', passport.authenticate('jwt', { session: false }), post);
+app.use('/post', post);
 app.use('/user', user);
 app.use('/explore', passport.authenticate('jwt', { session: false }), explore);
-app.use('/home', passport.authenticate('jwt', { session: false }), home);
+app.use('/home', home);
 app.use('/mypage', passport.authenticate('jwt', { session: false }), mypage);
 
 //====LISTEN TO THE SERVER =================================

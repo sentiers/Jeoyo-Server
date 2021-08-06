@@ -42,16 +42,34 @@ var userDataSchema = new Schema({
         info_m: Number, // (필수) 개인정보
         info_c: Number, // (선택) 개인정보
         marketing_c: Number, // (선택) 마케팅
-    }, 
-    user_active:{ 
-        profile: Number, // 프로필노출 (0:노출하지않음 1:노출함)
-        myType: Number, // 나의TYPE노출 (0:노출하지않음 1:노출함)
-        teamReview: Number // 팀원리뷰노출 (0:노출하지않음 1:노출함)
     },
-    user_alarm:{
-        chat: Number, // 채팅알림 (0:알림끔 1:알림켬)
-        activity: Number, // 활동알림 (0:알림끔 1:알림켬)
-        marketing: Number // 마케팅알림 (0:알림끔 1:알림켬)
+    user_active: {
+        profile: { // 프로필노출 (0:노출하지않음 1:노출함)
+            type: Number,
+            default: 1
+        },
+        myType: { // 나의TYPE노출 (0:노출하지않음 1:노출함)
+            type: Number,
+            default: 1
+        },
+        teamReview: { // 팀원리뷰노출 (0:노출하지않음 1:노출함)
+            type: Number,
+            default: 1
+        }
+    },
+    user_alarm: {
+        chat: { // 채팅알림 (0:알림끔 1:알림켬)
+            type: Number,
+            default: 1
+        },
+        activity: { // 활동알림 (0:알림끔 1:알림켬)
+            type: Number,
+            default: 1
+        },
+        marketing: { // 마케팅알림 (0:알림끔 1:알림켬)
+            type: Number,
+            default: 1
+        }
     }
 });
 

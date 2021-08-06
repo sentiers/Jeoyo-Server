@@ -130,6 +130,46 @@ function updateSurvey(email, data) {
     });
 };
 
+//==== 활동설정 수정 =========================
+function updateActivity(email, data) {
+    return new Promise(function (resolve, reject) {
+        UserData.updateOne(
+            { user_email: email },
+            {
+                $set: {
+                    'user_active.profile': data.user_active.profile,
+                    'user_active.myType': data.user_active.myType,
+                    'user_active.teamReview': data.user_active.teamReview
+                }
+            }
+        ).then(() => {
+            resolve(200);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+//==== 알림설정 수정 =========================
+function updateAlarm(email, data) {
+    return new Promise(function (resolve, reject) {
+        UserData.updateOne(
+            { user_email: email },
+            {
+                $set: {
+                    'user_alarm.chat': data.user_alarm.chat,
+                    'user_alarm.activity': data.user_alarm.activity,
+                    'user_alarm.marketing': data.user_alarm.marketing
+                }
+            }
+        ).then(() => {
+            resolve(200);
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
 // 테스팅용 데이터보내는 함수
 function testing() {
     return new Promise(function (resolve, reject) {
@@ -219,6 +259,27 @@ router.post('/survey', function (req, res, next) {
             res.status(code).send(code + ": 설문 수정 성공");
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 설문 수정 실패");
+        });
+});
+
+//==== POST 활동설정 수정 =============================
+router.post('/activity', function (req, res, next) {
+    updateActivity(req.user.user_email, req.body)
+        .then((code) => {
+            res.status(code).send(code + ": 활동설정 수정 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 활동설정 수정 실패");
+        });
+});
+
+
+//==== POST 알림설정 수정 =============================
+router.post('/alarm', function (req, res, next) {
+    updateAlarm(req.user.user_email, req.body)
+        .then((code) => {
+            res.status(code).send(code + ": 알림설정 수정 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 알림설정 수정 실패");
         });
 });
 

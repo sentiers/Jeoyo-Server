@@ -24,8 +24,14 @@ var PostSchema = new Schema({
     post_detailed: String, // 세부 룰
     post_created_at: Date, // 게시물 생성시점 YYYY-MM-DD HH:mm:ss
     post_updated_at: Date, // 게시물 수정시점 YYYY-MM-DD HH:mm:ss
-    post_view: Number,
-    post_popularity: Number // 게시물 인기도
+    post_view: { // 게시물 조회수
+        type: Number,
+        default: 0
+    },
+    post_popularity: { // 게시물 인기도
+        type: Number,
+        default: 0
+    }
 });
 
 var Post = mongoose.model('Posts', PostSchema);

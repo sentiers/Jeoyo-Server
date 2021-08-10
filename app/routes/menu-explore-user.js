@@ -12,8 +12,8 @@ function getUserById(idData) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
             _id: idData
-        }).then(post => {
-            resolve([200, post]);
+        }).then(user => {
+            resolve([200, user]);
         }).catch((err) => {
             reject(404);
         });
@@ -87,6 +87,16 @@ router.get('/:id', function (req, res, next) {
             res.status(data[0]).send(data[1]);
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 유저 가져오기 실패");
+        });
+});
+
+//==== GET 해당 id 유저 관심 유저로 추가 =============================
+router.get('/like/:id', function (req, res, next) {
+    likeUser(req.user.user_email, req.params.id)
+        .then((data) => {
+            res.status(data[0]).send(data[1]);
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 관심유저추가 실패");
         });
 });
 

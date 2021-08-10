@@ -35,10 +35,10 @@ require(path.join(__dirname, 'app', 'config', 'strategies'))(passport);
 app.use('/', root);
 app.use('/auth', auth);
 app.use('/chat', passport.authenticate('jwt', { session: false }), chat);
-app.use('/post', post); //testing 으로 jwt 빼놓음
-app.use('/user', user); //testing 으로 jwt 빼놓음
+app.use('/post', passport.authenticate('jwt', { session: false }), post);  
+app.use('/user', passport.authenticate('jwt', { session: false }), user); 
 app.use('/explore', passport.authenticate('jwt', { session: false }), explore);
-app.use('/home', home); //testing 으로 jwt 빼놓음
+app.use('/home', passport.authenticate('jwt', { session: false }), home);  
 app.use('/mypage', passport.authenticate('jwt', { session: false }), mypage);
 
 //====LISTEN TO THE SERVER =================================

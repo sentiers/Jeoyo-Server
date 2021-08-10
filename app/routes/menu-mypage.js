@@ -31,6 +31,76 @@ function getMyPosts(email) {
     });
 };
 
+//==== 관심팀원 가져오기 =========================
+function getLikedUsers(email) {
+    return new Promise(function (resolve, reject) {
+        UserData.findOne({ user_email: email })
+            .then((user) => {
+                UserData.aggregate([
+                    {
+                        "$match": {
+                            "_id": { "$in": user.user_likedUsers }
+                        }
+                    },
+                    {
+                        "$addFields": {
+                            "order": {
+                                "$indexOfArray": [
+                                    user.user_likedUsers,
+                                    "$_id"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "$sort": { "order": 1 }
+                    }
+                ]).then((users) => {
+                    resolve([200, users]);
+                }).catch((err) => {
+                    reject(500);
+                });
+            }).catch((err) => {
+                reject(401);
+            });
+    });
+};
+
+//==== 관심프로젝트 가져오기 =========================
+function getLikedProjects(email) {
+    return new Promise(function (resolve, reject) {
+        UserData.findOne({ user_email: email })
+            .then((user) => {
+                Post.aggregate([
+                    {
+                        "$match": {
+                            "_id": { "$in": user.user_likedPosts }
+                        }
+                    },
+                    {
+                        "$addFields": {
+                            "order": {
+                                "$indexOfArray": [
+                                    user.user_likedPosts,
+                                    "$_id"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "$sort": { "order": 1 }
+                    }
+                ]).then((posts) => {
+                    resolve([200, posts]);
+                }).catch((err) => {
+                    reject(500);
+                });
+            }).catch((err) => {
+                reject(401);
+            });
+    });
+};
+
 //==== 개인정보 수정 (한꺼번에) =========================
 function updateMyInfo(email, data) {
     return new Promise(function (resolve, reject) {
@@ -170,19 +240,6 @@ function updateAlarm(email, data) {
     });
 };
 
-// 테스팅용 데이터보내는 함수
-function testing() {
-    return new Promise(function (resolve, reject) {
-        UserData.findOne({
-            user_email: "1234@naver.com"
-        }).then(user => {
-            resolve([200, user]);
-        }).catch((err) => {
-            reject(401);
-        });
-    });
-};
-
 // ----------------------------------------------------------------
 
 //==== GET 내 정보 가져오기 =============================
@@ -191,16 +248,30 @@ router.get('/', function (req, res, next) {
         .then((data) => {
             res.status(data[0]).send(data[1]);
         }).catch((errcode) => {
+            console.log("ddd");
             res.status(errcode).send(errcode + ": 유저 정보 가져오기 실패");
         });
-    //    testing()
-    //        .then((data) => {
-    //            res.status(data[0]).send(data[1]);
-    //        }).catch((errcode) => {
-    //            res.status(errcode).send(errcode + ": 유저 정보 가져오기 실패");
-    //        });
 });
 
+//==== GET 관심팀원 가져오기 =============================
+router.get('/likedusers', function (req, res, next) {
+    getLikedUsers(req.user.user_email)
+        .then((data) => {
+            res.status(data[0]).send(data[1]);
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 관심팀원 가져오기 실패");
+        });
+});
+
+//==== GET 관심프로젝트 가져오기 =============================
+router.get('/likedprojects', function (req, res, next) {
+    getLikedProjects(req.user.user_email)
+        .then((data) => {
+            res.status(data[0]).send(data[1]);
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 관심프로젝트 가져오기 실패");
+        });
+});
 
 //==== GET 내가 쓴 모집글 가져오기 =============================
 router.get('/posts', function (req, res, next) {

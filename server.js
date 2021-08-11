@@ -11,12 +11,12 @@ var mongoose = require('mongoose');
 //====ROUTES================================================
 var root = require(__dirname + '/app/routes/root');
 var auth = require(__dirname + '/app/routes/auth');
-var chat = require(__dirname + '/app/routes/menu-chat');
-var post = require(__dirname + '/app/routes/menu-explore-post');
-var user = require(__dirname + '/app/routes/menu-explore-user');
-var explore = require(__dirname + '/app/routes/menu-explore');
-var home = require(__dirname + '/app/routes/menu-home');
-var mypage = require(__dirname + '/app/routes/menu-mypage');
+var chat = require(__dirname + '/app/routes/chat');
+var post = require(__dirname + '/app/routes/post');
+var user = require(__dirname + '/app/routes/user');
+var explore = require(__dirname + '/app/routes/explore');
+var home = require(__dirname + '/app/routes/home');
+var mypage = require(__dirname + '/app/routes/mypage');
 
 //====MONGOOOSE AND MONGOD==================================
 var url = 'mongodb+srv://dbUser:2021JeoyoApp@jeoyocluster.evzle.mongodb.net/JeoyoDatabase?retryWrites=true&w=majority';
@@ -35,10 +35,10 @@ require(path.join(__dirname, 'app', 'config', 'strategies'))(passport);
 app.use('/', root);
 app.use('/auth', auth);
 app.use('/chat', passport.authenticate('jwt', { session: false }), chat);
-app.use('/post', passport.authenticate('jwt', { session: false }), post);  
-app.use('/user', passport.authenticate('jwt', { session: false }), user); 
+app.use('/post', passport.authenticate('jwt', { session: false }), post);
+app.use('/user', passport.authenticate('jwt', { session: false }), user);
 app.use('/explore', passport.authenticate('jwt', { session: false }), explore);
-app.use('/home', passport.authenticate('jwt', { session: false }), home);  
+app.use('/home', passport.authenticate('jwt', { session: false }), home);
 app.use('/mypage', passport.authenticate('jwt', { session: false }), mypage);
 
 //====LISTEN TO THE SERVER =================================

@@ -118,7 +118,18 @@ function likeProject(email, idData, isLiked) {
                     $pull: { 'user_likedPosts': ObjectId(idData) }
                 }
             ).then(() => {
-                resolve(200);
+                Post.updateOne(
+                    { _id: idData },
+                    {
+                        $inc: {
+                            'post_popularity': -5
+                        }
+                    }
+                ).then(() => {
+                    resolve(200);
+                }).catch((err) => {
+                    reject(500);
+                });
             }).catch((err) => {
                 reject(500);
             });
@@ -134,7 +145,18 @@ function likeProject(email, idData, isLiked) {
                     }
                 }
             ).then(() => {
-                resolve(200);
+                Post.updateOne(
+                    { _id: idData },
+                    {
+                        $inc: {
+                            'post_popularity': 5
+                        }
+                    }
+                ).then(() => {
+                    resolve(200);
+                }).catch((err) => {
+                    reject(500);
+                });
             }).catch((err) => {
                 reject(500);
             });

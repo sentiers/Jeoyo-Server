@@ -90,6 +90,58 @@ function IncView(idData) {
     });
 };
 
+//==== 하트가 차있는지 아닌지 확인 ================
+function isLiked(email, idData) {
+    return new Promise(function (resolve, reject) {
+        UserData.findOne({
+            $and: [
+                { user_email: email },
+                { user_likedPosts: { $elemMatch: { $eq: ObjectId(idData) } } }
+            ]
+        }).then((user) => {
+            if (user) {
+                resolve(1);
+            } else {
+                resolve(0);
+            }
+        })
+    });
+};
+
+//==== 관심프로젝트 추가/삭제 함수 =========================
+function likeProject(email, idData, isLiked) {
+    return new Promise(function (resolve, reject) {
+        if (isLiked == 1) {
+            UserData.updateOne(
+                { user_email: email },
+                {
+                    $pull: { 'user_likedPosts': ObjectId(idData) }
+                }
+            ).then(() => {
+                resolve(200);
+            }).catch((err) => {
+                reject(500);
+            });
+        } else {
+            UserData.updateOne(
+                { user_email: email },
+                {
+                    $push: {
+                        'user_likedPosts': {
+                            $each: [ObjectId(idData)],
+                            $position: 0
+                        }
+                    }
+                }
+            ).then(() => {
+                resolve(200);
+            }).catch((err) => {
+                reject(500);
+            });
+        }
+    });
+};
+
 //==== 게시물 구분 & 지역 & 분야 & 정렬 필터=========================
 function getDivisionLocationFieldSortPosts(division, location, field, sort) {
     return new Promise(function (resolve, reject) {
@@ -428,15 +480,29 @@ function updatePost(email, idData, data) {
 //==== GET 게시물 id 별로 하나 가져오기 =============================
 router.get('/:id', function (req, res, next) {
     IncView(req.params.id).then(() => {
-        getPostById(req.user.user_email, req.params.id)
-            .then((data) => {
-                res.status(data[0]).send(data[1]);
-            }).catch((errcode) => {
-                res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
-            });
+        getPostById(req.user.user_email, req.params.id).then((data) => {
+            isLiked(req.user.user_email, req.params.id).then((liked) => {
+                res.status(data[0]).send({ user: data[1], isLiked: liked });
+            })
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
+        });
     }).catch((errcode) => {
         res.status(errcode).send(errcode + ": 게시물 가져오기 실패");
     });
+});
+
+//==== GET 해당 id 프로젝트 관심 프로젝트로 추가/삭제 =============================
+router.get('/like/:id', function (req, res, next) {
+    isLiked(req.user.user_email, req.params.id)
+        .then((liked) => {
+            likeProject(req.user.user_email, req.params.id, liked)
+                .then((code) => {
+                    res.status(code).send(code + ": 관심프로젝트 추가/삭제 성공");
+                }).catch((errcode) => {
+                    res.status(errcode).send(errcode + ": 관심프로젝트 추가/삭제 실패");
+                });
+        })
 });
 
 //==== GET 게시물 필터링 =============================

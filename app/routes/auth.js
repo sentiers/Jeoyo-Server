@@ -1,23 +1,21 @@
 var router = require('express').Router();
 var bcrypt = require('bcryptjs');
 var passport = require('passport');
+var jwt = require('jsonwebtoken');
 var UserData = require('../models/userData');
 var User = require('../models/user');
-var jwt = require('jsonwebtoken');
 
-// ----------------------------------------------------------------
-
-//==== 유저 등록 =========================
+//==== 유저 등록 함수 =========================
 function registerUser(data) {
     return new Promise(function (resolve, reject) {
         var newUser = new User(data);
         bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(newUser.user_password, salt, (err, hash) => {
+            bcrypt.hash(newUser.user_password, salt, (err, hash) => { // 비밀번호 해싱
                 if (err) {
                     reject(500);
                 }
                 newUser.user_password = hash;
-                newUser.save((err) => {
+                newUser.save((err) => { // 유저 저장
                     if (err) {
                         if (err.code == 11000) {
                             reject(409);
@@ -28,7 +26,7 @@ function registerUser(data) {
                         var newUserData = new UserData();
                         newUserData.user_name = data.user_name;
                         newUserData.user_email = data.user_email;
-                        newUserData.save((err) => {
+                        newUserData.save((err) => { // 유저 데이터 저장
                             if (err) {
                                 reject(500);
                             } else {
@@ -42,13 +40,13 @@ function registerUser(data) {
     });
 };
 
-//==== 회원탈퇴 =========================
+//==== 회원탈퇴 함수=========================
 function deleteAccount(email) {
     return new Promise(function (resolve, reject) {
-        UserData.deleteOne({
+        UserData.deleteOne({ // 유저데이터 삭제
             user_email: email
         }).then(() => {
-            User.deleteOne({
+            User.deleteOne({ // 유저 삭제
                 user_email: email
             }).then(() => {
                 resolve(200);
@@ -61,10 +59,10 @@ function deleteAccount(email) {
     });
 };
 
-//==== 유저 설문조사 =========================
+//==== 유저 설문조사 함수=========================
 function termsOfUse(email, data) {
     return new Promise(function (resolve, reject) {
-        UserData.updateOne(
+        UserData.updateOne( // 유저데이터 업데이트
             { user_email: email },
             {
                 $set: {
@@ -82,13 +80,13 @@ function termsOfUse(email, data) {
     });
 };
 
-//==== 최초 로그인인가 =========================
+//==== 최초 로그인판별 함수 =========================
 function isFirstLogin(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
             user_email: email
         }).then(user => {
-            if (user.user_agreement.agreement_m == 0) {
+            if (user.user_agreement.agreement_m == 0) { // 이용약관동의 여부
                 resolve(201);
             } else {
                 resolve(200);
@@ -99,13 +97,13 @@ function isFirstLogin(email) {
     });
 };
 
-//==== 현재유저의 현재 비밀번호확인 ==============
+//==== 현재유저의 현재 비밀번호확인 함수 ==============
 function checkUser(email, data) {
     return new Promise(function (resolve, reject) {
         User.findOne({
             user_email: email
         }).then(user => {
-            bcrypt.compare(data.user_password, user.user_password)
+            bcrypt.compare(data.user_password, user.user_password) // 비밀번호 일치 확인
                 .then((res) => {
                     if (res === false) {
                         reject(401);
@@ -121,11 +119,11 @@ function checkUser(email, data) {
     });
 };
 
-//==== 비밀번호변경 =========================
+//==== 비밀번호변경 함수 =========================
 function updatePassword(email, data) {
     return new Promise(function (resolve, reject) {
         bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(data.user_new_pwd, salt, (err, hash) => {
+            bcrypt.hash(data.user_new_pwd, salt, (err, hash) => { // 비밀번호 해싱
                 if (err) {
                     reject(500);
                 } else {
@@ -155,7 +153,6 @@ function mail(email) {
 
     });
 };
-
 
 // ----------------------------------------------------------------
 
@@ -234,34 +231,15 @@ router.post('/update', passport.authenticate('jwt', { session: false }), functio
     });
 });
 
-
 // 이메일인증*
 router.post('/email', function (req, res, next) {
-
-
+    
 });
 
 // 비밀번호찾기*
 router.post('/find', function (req, res, next) {
 
-
-
 });
-
-// google 계정으로 로그인*
-router.get('/google',
-    passport.authenticate('google', {
-        scope:
-            ['email', 'profile']
-    }
-    ));
-
-router.get('/google/callback',
-    passport.authenticate('google', {
-        successRedirect: '/auth',
-        failureRedirect: '/401'
-    }));
-
 
 // ----------------------------------------------------------------
 

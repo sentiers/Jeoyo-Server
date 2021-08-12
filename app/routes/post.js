@@ -1,14 +1,14 @@
-//====HANDLE POST ROUTES =============
+// --------------------------------------------------------
 var router = require('express').Router();
-var UserData = require('../models/userData');
-var Post = require('../models/post');
+var ObjectId = require('mongodb').ObjectID;
 var moment = require('moment');
-const { post } = require('./menu-home');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
-var ObjectId = require('mongodb').ObjectID;
-// ----------------------------------------------------------------
+var UserData = require('../models/userData');
+var Post = require('../models/post');
+// --------------------------------------------------------
 
+// 현재 날짜 반환하는 함수
 function getCurrentDate() {
     var date = new Date();
     var year = date.getFullYear();
@@ -17,6 +17,7 @@ function getCurrentDate() {
     return new Date(Date.UTC(year, month, today));
 };
 
+// 현재 날짜, 시간 반환하는 함수
 function getCurrentDateTime() {
     var date = new Date();
     var year = date.getFullYear();
@@ -29,7 +30,9 @@ function getCurrentDateTime() {
     return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
 };
 
-//==== 게시물 id 별로 조회 =========================
+// --------------------------------------------------------
+
+//==== 게시물 id 별로 조회하는 함수 =========================
 function getPostById(email, idData) {
     return new Promise(function (resolve, reject) {
         Post.findOne({
@@ -39,13 +42,13 @@ function getPostById(email, idData) {
                 resolve([200, post]);
             }
             else {
-                UserData.updateOne(
+                UserData.updateOne( // 이미 최근본 프로젝트에 존재한다면 기록삭제
                     { user_email: email },
                     {
                         $pull: { 'user_recent_posts': ObjectId(idData) }
                     }
                 ).then(() => {
-                    UserData.updateOne(
+                    UserData.updateOne( // 가장 최근쪽으로 프로젝트를 최근 본 프로젝트에 푸시
                         { user_email: email },
                         {
                             $push: {
@@ -78,8 +81,8 @@ function IncView(idData) {
             { _id: idData },
             {
                 $inc: {
-                    'post_popularity': 1,
-                    'post_view': 1
+                    'post_popularity': 1, // 인기도 1 올림
+                    'post_view': 1 // 조회수 1 올림
                 }
             }
         ).then(() => {
@@ -90,19 +93,19 @@ function IncView(idData) {
     });
 };
 
-//==== 하트가 차있는지 아닌지 확인 ================
+//==== 하트가 차있는지 아닌지 확인하는 함수 ================
 function isLiked(email, idData) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
             $and: [
                 { user_email: email },
-                { user_likedPosts: { $elemMatch: { $eq: ObjectId(idData) } } }
+                { user_likedPosts: { $elemMatch: { $eq: ObjectId(idData) } } } // 관심프로젝트에 이미 존재하는지 확인
             ]
         }).then((user) => {
             if (user) {
-                resolve(1);
+                resolve(1); // 존재시 1 반환
             } else {
-                resolve(0);
+                resolve(0); // 존재하지 않을시 0 반환
             }
         })
     });
@@ -111,18 +114,18 @@ function isLiked(email, idData) {
 //==== 관심프로젝트 추가/삭제 함수 =========================
 function likeProject(email, idData, isLiked) {
     return new Promise(function (resolve, reject) {
-        if (isLiked == 1) {
+        if (isLiked == 1) { // 이미 관심 프로젝트일때
             UserData.updateOne(
                 { user_email: email },
                 {
-                    $pull: { 'user_likedPosts': ObjectId(idData) }
+                    $pull: { 'user_likedPosts': ObjectId(idData) } // 관심프로젝트에서 제거
                 }
             ).then(() => {
                 Post.updateOne(
                     { _id: idData },
                     {
                         $inc: {
-                            'post_popularity': -5
+                            'post_popularity': -5 // 인기도 -5
                         }
                     }
                 ).then(() => {
@@ -133,11 +136,11 @@ function likeProject(email, idData, isLiked) {
             }).catch((err) => {
                 reject(500);
             });
-        } else {
+        } else { // 관심 프로젝트에 있지않을떄
             UserData.updateOne(
                 { user_email: email },
                 {
-                    $push: {
+                    $push: { // 관심 프로젝트에 추가
                         'user_likedPosts': {
                             $each: [ObjectId(idData)],
                             $position: 0
@@ -149,7 +152,7 @@ function likeProject(email, idData, isLiked) {
                     { _id: idData },
                     {
                         $inc: {
-                            'post_popularity': 5
+                            'post_popularity': 5 // 인기도 +5
                         }
                     }
                 ).then(() => {
@@ -174,7 +177,7 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
                     post_location: { $elemMatch: { $eq: location } },
                     post_field: field
                 }
-            ).sort({ "post_popularity": -1 }).then(post => {
+            ).sort({ "post_popularity": -1 }).then(post => { // 인기도 정렬
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -186,7 +189,7 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
                     post_location: { $elemMatch: { $eq: location } },
                     post_field: field
                 }
-            ).sort({ "post_recruit_end": 1 }).then(post => {
+            ).sort({ "post_recruit_end": 1 }).then(post => { // 모집마감순 정렬
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -390,7 +393,7 @@ function getDivisionPosts(division) {
     });
 };
 
-//==== 모든 게시물 가져오기 =========================
+//==== 모든 게시물 가져오는 함수 =========================
 function getAllPosts() {
     return new Promise(function (resolve, reject) {
         Post.find()
@@ -402,7 +405,7 @@ function getAllPosts() {
     });
 };
 
-//==== 게시물 삭제하기 =========================
+//==== 게시물 삭제하는 함수 =========================
 function deletePostById(email, idData) {
     return new Promise(function (resolve, reject) {
         Post.findOne({
@@ -426,7 +429,7 @@ function deletePostById(email, idData) {
 };
 
 
-//==== 게시물 생성 =========================
+//==== 게시물 생성하는 함수 =========================
 function createPost(email, data) {
     return new Promise(function (resolve, reject) {
         var newPost = new Post(data);
@@ -436,9 +439,9 @@ function createPost(email, data) {
             newPost.post_location = user.user_location;
             newPost.post_user_email = user.user_email;
             newPost.post_user_name = user.user_name;
-            newPost.post_recruit_start = getCurrentDate();
-            newPost.post_created_at = getCurrentDateTime();
-            newPost.save((err) => {
+            newPost.post_recruit_start = getCurrentDate(); // 모집시작 현재날짜
+            newPost.post_created_at = getCurrentDateTime(); // 게시물생성시점 현재날짜시간
+            newPost.save((err) => { // 게시물 저장
                 if (err) {
                     reject(500);
                 } else {
@@ -478,7 +481,7 @@ function updatePost(email, idData, data) {
                                     'post_plan': data.post_plan,
                                     'post_preference': data.post_preference,
                                     'post_detailed': data.post_detailed,
-                                    'post_updated_at': getCurrentDateTime()
+                                    'post_updated_at': getCurrentDateTime() // 게시물수정시점 현재날짜시간
                                 }
                             }).then(() => {
                                 resolve(200);
@@ -626,5 +629,7 @@ router.post('/update/:id', function (req, res, next) {
             res.status(errcode).send(errcode + ": 게시물 수정 실패");
         });
 });
+
+// --------------------------------------------------------
 
 module.exports = router;

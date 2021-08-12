@@ -1,11 +1,10 @@
-//====HANDLE MY PAGE ROUTES =============
+// --------------------------------------------------------------
 var router = require('express').Router();
 var UserData = require('../models/userData');
 var Post = require('../models/post');
+// --------------------------------------------------------------
 
-// ----------------------------------------------------------------
-
-//==== 내 정보가져오기 =========================
+//==== 내 정보가져오는 함수 =========================
 function getMyInfo(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
@@ -18,7 +17,7 @@ function getMyInfo(email) {
     });
 };
 
-//==== 내가 올린 모집글 데이터들 가져오기 =========================
+//==== 내가 올린 모집글 데이터들 가져오는 함수 =========================
 function getMyPosts(email) {
     return new Promise(function (resolve, reject) {
         Post.find({
@@ -31,20 +30,20 @@ function getMyPosts(email) {
     });
 };
 
-//==== 관심팀원 가져오기 =========================
+//==== 관심팀원 가져오는 함수 =========================
 function getLikedUsers(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({ user_email: email })
             .then((user) => {
                 UserData.aggregate([
                     {
-                        "$match": {
+                        "$match": { // 관심팀원에 있는 유저들
                             "_id": { "$in": user.user_likedUsers }
                         }
                     },
                     {
                         "$addFields": {
-                            "order": {
+                            "order": { // 관심팀원에 있는 유저들 순서대로 Order 필드에 순서매기기
                                 "$indexOfArray": [
                                     user.user_likedUsers,
                                     "$_id"
@@ -52,7 +51,7 @@ function getLikedUsers(email) {
                             }
                         }
                     },
-                    {
+                    { // Order 필드로 정렬하기
                         "$sort": { "order": 1 }
                     }
                 ]).then((users) => {
@@ -66,20 +65,20 @@ function getLikedUsers(email) {
     });
 };
 
-//==== 관심프로젝트 가져오기 =========================
+//==== 관심프로젝트 가져오는 함수 =========================
 function getLikedProjects(email) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({ user_email: email })
             .then((user) => {
                 Post.aggregate([
                     {
-                        "$match": {
+                        "$match": { // 관심프로젝트에 있는 게시물들
                             "_id": { "$in": user.user_likedPosts }
                         }
                     },
                     {
                         "$addFields": {
-                            "order": {
+                            "order": {// 관심프로젝트에 있는 게시물들 순서대로 Order 필드에 순서매기기 
                                 "$indexOfArray": [
                                     user.user_likedPosts,
                                     "$_id"
@@ -87,7 +86,7 @@ function getLikedProjects(email) {
                             }
                         }
                     },
-                    {
+                    { // Order 필드로 정렬하기
                         "$sort": { "order": 1 }
                     }
                 ]).then((posts) => {
@@ -101,7 +100,7 @@ function getLikedProjects(email) {
     });
 };
 
-//==== 개인정보 수정 (한꺼번에) =========================
+//==== 개인정보 수정 (한꺼번에) 함수 =========================
 function updateMyInfo(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -124,7 +123,7 @@ function updateMyInfo(email, data) {
     });
 };
 
-//==== 내 인트로수정 =========================
+//==== 내 인트로수정 함수 =========================
 function updateMyIntro(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -143,7 +142,7 @@ function updateMyIntro(email, data) {
     });
 };
 
-//==== 내 지역 수정 =========================
+//==== 내 지역 수정 함수 =========================
 function updateLocation(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -161,7 +160,7 @@ function updateLocation(email, data) {
     });
 };
 
-//==== 내 관심분야 수정 =========================
+//==== 내 관심분야 수정 함수 =========================
 function updateField(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -179,7 +178,7 @@ function updateField(email, data) {
     });
 };
 
-//==== 내 설문지 수정 =========================
+//==== 내 설문지 수정 함수=========================
 function updateSurvey(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -200,7 +199,7 @@ function updateSurvey(email, data) {
     });
 };
 
-//==== 활동설정 수정 =========================
+//==== 활동설정 수정 함수 =========================
 function updateActivity(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -220,7 +219,7 @@ function updateActivity(email, data) {
     });
 };
 
-//==== 알림설정 수정 =========================
+//==== 알림설정 수정 함수=========================
 function updateAlarm(email, data) {
     return new Promise(function (resolve, reject) {
         UserData.updateOne(
@@ -343,7 +342,6 @@ router.post('/activity', function (req, res, next) {
         });
 });
 
-
 //==== POST 알림설정 수정 =============================
 router.post('/alarm', function (req, res, next) {
     updateAlarm(req.user.user_email, req.body)
@@ -353,5 +351,7 @@ router.post('/alarm', function (req, res, next) {
             res.status(errcode).send(errcode + ": 알림설정 수정 실패");
         });
 });
+
+// --------------------------------------------------------------
 
 module.exports = router;

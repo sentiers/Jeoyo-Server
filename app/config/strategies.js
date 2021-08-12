@@ -1,3 +1,4 @@
+// ----------------------------------------------------------------
 var passport = require('passport');
 var passportJWT = require("passport-jwt");
 var LocalStrategy = require('passport-local').Strategy;
@@ -5,6 +6,7 @@ var JWTStrategy = passportJWT.Strategy;
 var ExtractJWT = passportJWT.ExtractJwt;
 var bcrypt = require('bcryptjs');
 var User = require('../models/user');
+// ----------------------------------------------------------------
 
 module.exports = function (passport) {
     

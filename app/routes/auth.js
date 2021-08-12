@@ -1,9 +1,11 @@
+// ----------------------------------------------------------------
 var router = require('express').Router();
 var bcrypt = require('bcryptjs');
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
 var UserData = require('../models/userData');
 var User = require('../models/user');
+// ----------------------------------------------------------------
 
 //==== 유저 등록 함수 =========================
 function registerUser(data) {
@@ -233,7 +235,7 @@ router.post('/update', passport.authenticate('jwt', { session: false }), functio
 
 // 이메일인증*
 router.post('/email', function (req, res, next) {
-    
+
 });
 
 // 비밀번호찾기*

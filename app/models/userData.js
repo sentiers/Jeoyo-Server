@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+// 유저 데이터 스키마
 var userDataSchema = new Schema({
     user_img: String, // 프로필이미지
     user_img_back: String, // 프로필배경이미지

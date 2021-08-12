@@ -1,13 +1,14 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+// 게시물 스키마
 var PostSchema = new Schema({
     post_division: String, // 공모전인지 스터디인지 분류
     post_field: String, // 게시물 분야 (광고냐 프로그래밍이냐 등)
     post_img: String, // 게시물 이미지
     post_title: String, // 게시물 제목
-    post_recruit_start: Date, // 모집기간 시작일 YYYY-MM-DD
-    post_recruit_end: Date, // 모집기간 마감일 YYYY-MM-DD
+    post_recruit_start: Date, // 모집기간 시작일 YYYY-MM-DD 00:00:00
+    post_recruit_end: Date, // 모집기간 마감일 YYYY-MM-DD 00:00:00
     post_requirements: { // 희망 팀원 조건
         status: String, // 상태(재학중, 졸업 등)
         field: [],       // 직무

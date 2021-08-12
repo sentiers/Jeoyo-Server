@@ -40,7 +40,7 @@ function getRecentViewProjects(email) {
                         }
                     },
                     {
-                        "$sort": { "order": 1 } // ORder대로 정렬하기 
+                        "$sort": { "order": 1 } // Order대로 정렬하기 
                     }
                 ]).limit(3)
                     .then((posts) => {

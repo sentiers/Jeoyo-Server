@@ -97,9 +97,9 @@ function IncView(idData) {
 function isLiked(email, idData) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
-            $and: [
+            $and: [// 관심프로젝트에 이미 존재하는지 확인
                 { user_email: email },
-                { user_likedPosts: { $elemMatch: { $eq: ObjectId(idData) } } } // 관심프로젝트에 이미 존재하는지 확인
+                { user_likedPosts: { $elemMatch: { $eq: ObjectId(idData) } } } 
             ]
         }).then((user) => {
             if (user) {

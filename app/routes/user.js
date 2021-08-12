@@ -1,14 +1,13 @@
-//====HANDLE POST ROUTES =============
+// ----------------------------------------------------------------
 var router = require('express').Router();
-var UserData = require('../models/userData');
-var Post = require('../models/post');
+var ObjectId = require('mongodb').ObjectID;
 var moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
-var ObjectId = require('mongodb').ObjectID;
+var UserData = require('../models/userData');
 // ----------------------------------------------------------------
 
-//==== 유저 id 별로 조회 =========================
+//==== 유저 id 별로 조회 함수 =========================
 function getUserById(idData) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
@@ -21,19 +20,19 @@ function getUserById(idData) {
     });
 };
 
-//==== 하트가 차있는지 아닌지 확인 ================
+//==== 하트가 차있는지 아닌지 확인하는 함수 ================
 function isLiked(email, idData) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
-            $and: [
+            $and: [ // 관심팀원에 이미 존재하는지 확인
                 { user_email: email },
                 { user_likedUsers: { $elemMatch: { $eq: ObjectId(idData) } } }
             ]
         }).then((user) => {
             if (user) {
-                resolve(1);
+                resolve(1); // 존재시 1 반환
             } else {
-                resolve(0);
+                resolve(0); // 존재하지 않을시 0 반환
             }
         })
     });
@@ -42,22 +41,22 @@ function isLiked(email, idData) {
 //==== 관심유저 추가/삭제 함수 =========================
 function likeUser(email, idData, isLiked) {
     return new Promise(function (resolve, reject) {
-        if (isLiked == 1) {
+        if (isLiked == 1) { // 이미 관심 팀원일때
             UserData.updateOne(
                 { user_email: email },
                 {
-                    $pull: { 'user_likedUsers': ObjectId(idData) }
+                    $pull: { 'user_likedUsers': ObjectId(idData) } // 관심팀원에서 제거
                 }
             ).then(() => {
                 resolve(200);
             }).catch((err) => {
                 reject(500);
             });
-        } else {
+        } else { // 관심 팀원에 있지않을떄
             UserData.updateOne(
                 { user_email: email },
                 {
-                    $push: {
+                    $push: { // 관심 팀원에 추가
                         'user_likedUsers': {
                             $each: [ObjectId(idData)],
                             $position: 0
@@ -194,5 +193,7 @@ router.get('/', function (req, res, next) {
             });
     }
 });
+
+// --------------------------------------------------------
 
 module.exports = router;

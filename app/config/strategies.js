@@ -1,14 +1,14 @@
 var passport = require('passport');
 var passportJWT = require("passport-jwt");
-
 var LocalStrategy = require('passport-local').Strategy;
 var JWTStrategy = passportJWT.Strategy;
+var ExtractJWT = passportJWT.ExtractJwt;
 var bcrypt = require('bcryptjs');
 var User = require('../models/user');
-var ExtractJWT = passportJWT.ExtractJwt;
-module.exports = function (passport) {
 
-    passport.use(
+module.exports = function (passport) {
+    
+    passport.use( // 로컬 Passport
         new LocalStrategy({ usernameField: 'user_email', passwordField: 'user_password' }, (user_email, user_password, done) => {
             User.findOne({
                 user_email: user_email
@@ -16,7 +16,7 @@ module.exports = function (passport) {
                 if (!user) {
                     return done(null, false);
                 }
-                bcrypt.compare(user_password, user.user_password, (err, isMatch) => {
+                bcrypt.compare(user_password, user.user_password, (err, isMatch) => { // 비밀번호 일치 확인
                     if (err) {
                         throw err;
                     } else if (isMatch) {
@@ -29,11 +29,11 @@ module.exports = function (passport) {
         })
     );
 
-    passport.use(new JWTStrategy({
+    passport.use(new JWTStrategy({ // Jwt Passport
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey: '2021jeoyoapp2021'
     }, function (jwtPayload, done) {
-        return User.findOne({ _id: jwtPayload._id })
+        return User.findOne({ _id: jwtPayload._id }) // 해당 유저 확인
             .then(user => {
                 return done(null, user);
             })

@@ -99,7 +99,7 @@ function isLiked(email, idData) {
         UserData.findOne({
             $and: [// 관심프로젝트에 이미 존재하는지 확인
                 { user_email: email },
-                { user_likedPosts: { $elemMatch: { $eq: ObjectId(idData) } } } 
+                { user_likedPosts: { $elemMatch: { $eq: ObjectId(idData) } } }
             ]
         }).then((user) => {
             if (user) {
@@ -175,7 +175,8 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
                 {
                     post_division: division,
                     post_location: { $elemMatch: { $eq: location } },
-                    post_field: field
+                    post_field: field,
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).sort({ "post_popularity": -1 }).then(post => { // 인기도 정렬
                 resolve([200, post]);
@@ -187,7 +188,8 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
                 {
                     post_division: division,
                     post_location: { $elemMatch: { $eq: location } },
-                    post_field: field
+                    post_field: field,
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).sort({ "post_recruit_end": 1 }).then(post => { // 모집마감순 정렬
                 resolve([200, post]);
@@ -199,7 +201,8 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
                 {
                     post_division: division,
                     post_location: { $elemMatch: { $eq: location } },
-                    post_field: field
+                    post_field: field,
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).then(post => {
                 resolve([200, post]);
@@ -217,7 +220,8 @@ function getDivisionLocationFieldPosts(division, location, field) {
             {
                 post_division: division,
                 post_location: { $elemMatch: { $eq: location } },
-                post_field: field
+                post_field: field,
+                post_recruit_end: { $gte: getCurrentDate() }
             }
         ).then(post => {
             resolve([200, post]);
@@ -234,7 +238,8 @@ function getDivisionLocationSortPosts(division, location, sort) {
             Post.find(
                 {
                     post_division: division,
-                    post_location: { $elemMatch: { $eq: location } }
+                    post_location: { $elemMatch: { $eq: location } },
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).sort({ "post_popularity": -1 }).then(post => {
                 resolve([200, post]);
@@ -245,7 +250,8 @@ function getDivisionLocationSortPosts(division, location, sort) {
             Post.find(
                 {
                     post_division: division,
-                    post_location: { $elemMatch: { $eq: location } }
+                    post_location: { $elemMatch: { $eq: location } },
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).sort({ "post_recruit_end": 1 }).then(post => {
                 resolve([200, post]);
@@ -256,7 +262,8 @@ function getDivisionLocationSortPosts(division, location, sort) {
             Post.find(
                 {
                     post_division: division,
-                    post_location: { $elemMatch: { $eq: location } }
+                    post_location: { $elemMatch: { $eq: location } },
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).then(post => {
                 resolve([200, post]);
@@ -275,7 +282,8 @@ function getDivisionFieldSortPosts(division, field, sort) {
             Post.find(
                 {
                     post_division: division,
-                    post_field: field
+                    post_field: field,
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).sort({ "post_popularity": -1 }).then(post => {
                 resolve([200, post]);
@@ -286,7 +294,8 @@ function getDivisionFieldSortPosts(division, field, sort) {
             Post.find(
                 {
                     post_division: division,
-                    post_field: field
+                    post_field: field,
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).sort({ "post_recruit_end": 1 }).then(post => {
                 resolve([200, post]);
@@ -297,7 +306,8 @@ function getDivisionFieldSortPosts(division, field, sort) {
             Post.find(
                 {
                     post_division: division,
-                    post_field: field
+                    post_field: field,
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).then(post => {
                 resolve([200, post]);
@@ -315,6 +325,7 @@ function getDivisionLocationPosts(division, location) {
             {
                 post_division: division,
                 post_location: { $elemMatch: { $eq: location } },
+                post_recruit_end: { $gte: getCurrentDate() }
             }
         ).then(post => {
             resolve([200, post]);
@@ -330,7 +341,8 @@ function getDivisionFieldPosts(division, field) {
         Post.find(
             {
                 post_division: division,
-                post_field: field
+                post_field: field,
+                post_recruit_end: { $gte: getCurrentDate() }
             }
         ).then(post => {
             resolve([200, post]);
@@ -346,7 +358,8 @@ function getDivisionSortPosts(division, sort) {
         if (sort == "인기순") {
             Post.find(
                 {
-                    post_division: division
+                    post_division: division,
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).sort({ "post_popularity": -1 }).then(post => {
                 resolve([200, post]);
@@ -356,7 +369,8 @@ function getDivisionSortPosts(division, sort) {
         } else if (sort == "모집마감순") {
             Post.find(
                 {
-                    post_division: division
+                    post_division: division,
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).sort({ "post_recruit_end": 1 }).then(post => {
                 console.log("하하");
@@ -367,7 +381,8 @@ function getDivisionSortPosts(division, sort) {
         } else {
             Post.find(
                 {
-                    post_division: division
+                    post_division: division,
+                    post_recruit_end: { $gte: getCurrentDate() }
                 }
             ).then(post => {
                 resolve([200, post]);
@@ -383,7 +398,8 @@ function getDivisionPosts(division) {
     return new Promise(function (resolve, reject) {
         Post.find(
             {
-                post_division: division
+                post_division: division,
+                post_recruit_end: { $gte: getCurrentDate() }
             }
         ).then(post => {
             resolve([200, post]);
@@ -396,7 +412,9 @@ function getDivisionPosts(division) {
 //==== 모든 게시물 가져오는 함수 =========================
 function getAllPosts() {
     return new Promise(function (resolve, reject) {
-        Post.find()
+        Post.find({
+            post_recruit_end: { $gte: getCurrentDate() }
+        })
             .then(data => {
                 resolve([200, data]);
             }).catch((err) => {

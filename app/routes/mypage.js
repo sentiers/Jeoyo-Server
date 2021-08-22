@@ -37,8 +37,11 @@ function getLikedUsers(email) {
             .then((user) => {
                 UserData.aggregate([
                     {
-                        "$match": { // 관심팀원에 있는 유저들
-                            "_id": { "$in": user.user_likedUsers }
+                        "$match": {
+                            "$and": [
+                                { "_id": { "$in": user.user_likedUsers } },// 관심팀원에 있는 유저들
+                                { 'user_active.profile': 1 } // 프로필 공개한 사람만
+                            ]
                         }
                     },
                     {

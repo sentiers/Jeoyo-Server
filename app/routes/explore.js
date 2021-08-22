@@ -5,10 +5,21 @@ var UserData = require('../models/userData');
 var Post = require('../models/post');
 // ----------------------------------------------------------------
 
+// 현재 날짜 반환하는 함수
+function getCurrentDate() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var today = date.getDate();
+    return new Date(Date.UTC(year, month, today));
+};
+
 //==== 인기있는 프로젝트 =========================
 function getPopularProjects() {
     return new Promise(function (resolve, reject) {
-        Post.find().sort({ "post_popularity": 1 }) // 인기도순으로 정렬
+        Post.find({
+            post_recruit_end: { $gte: getCurrentDate() } // 모집기간 안지난 프로젝트
+        }).sort({ "post_popularity": 1 }) // 인기도순으로 정렬
             .limit(3) // 3개로 제한
             .then(post => {
                 resolve([200, post]);
@@ -19,7 +30,7 @@ function getPopularProjects() {
 };
 
 //==== 최근 본 프로젝트 =========================
-function getRecentViewProjects(email) {
+function getRecentViewProjects(email) { // 마감지난것도 보이게해놓음
     return new Promise(function (resolve, reject) {
         UserData.findOne({ user_email: email })
             .then((user) => {

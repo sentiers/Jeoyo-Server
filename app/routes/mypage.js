@@ -66,7 +66,7 @@ function getLikedUsers(email) {
 };
 
 //==== 관심프로젝트 가져오는 함수 =========================
-function getLikedProjects(email) {
+function getLikedProjects(email) { // 마감지난것도 보이게해놓음
     return new Promise(function (resolve, reject) {
         UserData.findOne({ user_email: email })
             .then((user) => {

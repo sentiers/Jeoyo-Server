@@ -4,6 +4,15 @@ var UserData = require('../models/userData');
 var Post = require('../models/post');
 // -----------------------------------------------------------
 
+// 현재 날짜 반환하는 함수
+function getCurrentDate() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var today = date.getDate();
+    return new Date(Date.UTC(year, month, today));
+};
+
 //==== 프로젝트 최신 3개씩 반환하는 함수=========================
 function getRecentProjects() {
     return new Promise(function (resolve, reject) {

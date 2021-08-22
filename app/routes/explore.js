@@ -19,7 +19,7 @@ function getPopularProjects() {
     return new Promise(function (resolve, reject) {
         Post.find({
             post_recruit_end: { $gte: getCurrentDate() } // 모집기간 안지난 프로젝트
-        }).sort({ "post_popularity": 1 }) // 인기도순으로 정렬
+        }).sort({ "post_popularity": -1 }) // 인기도순으로 정렬
             .limit(3) // 3개로 제한
             .then(post => {
                 resolve([200, post]);

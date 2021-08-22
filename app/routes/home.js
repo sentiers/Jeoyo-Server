@@ -7,22 +7,28 @@ var Post = require('../models/post');
 //==== 프로젝트 최신 3개씩 반환하는 함수=========================
 function getRecentProjects() {
     return new Promise(function (resolve, reject) {
-        Post.find({ post_division: { $in: ["공모전", "대외활동"] } }) 
-            .limit(3).then((activity) => { // 공모전 게시물 3개 제한
-                Post.find({ post_division: "스터디" }) 
-                    .limit(3).then((study) => { // 스터디 게시물 3개 제한
-                        Post.find({ post_division: "동아리" })
-                            .limit(3).then((club) => { // 동아리 게시물 3개 제한
-                                resolve([200, activity, study, club]);
-                            }).catch((err) => {
-                                reject(500);
-                            });
-                    }).catch((err) => {
-                        reject(500);
-                    });
+        Post.find({
+            post_division: { $in: ["공모전", "대외활동"] },
+            post_recruit_end: { $gte: getCurrentDate() }
+        }).limit(3).then((activity) => { // 공모전 게시물 3개 제한
+            Post.find({
+                post_division: "스터디",
+                post_recruit_end: { $gte: getCurrentDate() }
+            }).limit(3).then((study) => { // 스터디 게시물 3개 제한
+                Post.find({
+                    post_division: "동아리",
+                    post_recruit_end: { $gte: getCurrentDate() }
+                }).limit(3).then((club) => { // 동아리 게시물 3개 제한
+                    resolve([200, activity, study, club]);
+                }).catch((err) => {
+                    reject(500);
+                });
             }).catch((err) => {
                 reject(500);
             });
+        }).catch((err) => {
+            reject(500);
+        });
     });
 };
 

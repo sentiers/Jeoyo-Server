@@ -78,7 +78,8 @@ function getLocationFieldUsers(location, field) {
         UserData.find(
             {
                 user_location: { $elemMatch: { $eq: location } },
-                user_field: { $elemMatch: { $eq: field } }
+                user_field: { $elemMatch: { $eq: field } },
+                'user_active.profile': 1
             }
         ).then(user => {
             resolve([200, user]);
@@ -93,7 +94,8 @@ function getLocationUsers(location) {
     return new Promise(function (resolve, reject) {
         UserData.find(
             {
-                user_location: { $elemMatch: { $eq: location } }
+                user_location: { $elemMatch: { $eq: location } },
+                'user_active.profile': 1
             }
         ).then(user => {
             resolve([200, user]);
@@ -108,7 +110,8 @@ function getFieldUsers(field) {
     return new Promise(function (resolve, reject) {
         UserData.find(
             {
-                user_field: { $elemMatch: { $eq: field } }
+                user_field: { $elemMatch: { $eq: field } },
+                'user_active.profile': 1
             }
         ).then(user => {
             resolve([200, user]);
@@ -121,7 +124,9 @@ function getFieldUsers(field) {
 //==== 모든 유저 가져오기 =========================
 function getAllUsers() {
     return new Promise(function (resolve, reject) {
-        UserData.find()
+        UserData.find({
+            'user_active.profile': 1
+        })
             .then(user => {
                 resolve([200, user]);
             }).catch((err) => {

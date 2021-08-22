@@ -209,7 +209,6 @@ router.post('/login', function (req, res, next) {
                 var token = jwt.sign(user.toJSON(), '2021jeoyoapp2021');
                 isFirstLogin(user.user_email)
                     .then((code) => {
-                        console.log("로그인");
                         res.status(code).json({ user, token });
                     }).catch((errcode) => {
                         res.status(errcode).send(errcode + ": 로그인 실패");

@@ -52,7 +52,8 @@ function getNearUsers(email) {
                     "$match": {
                         "$and": [
                             { "user_location": { "$in": user.user_location } }, // 지역이 일치하는 유저들
-                            { "user_email": { "$ne": user.user_email } } // 현재유저를 제외
+                            { "user_email": { "$ne": user.user_email } }, // 현재유저를 제외
+                            { 'user_active.profile': 1 } // 프로필 공개한 사람만
                         ]
                     }
                 },

@@ -67,8 +67,9 @@ function getPostById(email, idData) {
                     reject(401);
                 });
             }
-        }).catch((err) => {
-            console.log(err);
+        }).catch((err) => { //6122a16b36157e2bd073a6df
+            console.log("err"); // remove from likedposts
+
             reject(404);
         });
     });

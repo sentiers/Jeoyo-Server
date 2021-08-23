@@ -15,7 +15,8 @@ function getUserById(idData) {
         }).then(user => {
             resolve([200, user]);
         }).catch((err) => {
-            reject(404);
+            console.log("err");
+            reject(404); // remove from likedusers
         });
     });
 };

@@ -4,6 +4,19 @@ var UserData = require('../models/userData');
 var Post = require('../models/post');
 // --------------------------------------------------------------
 
+// 현재 날짜, 시간 반환하는 함수
+function getCurrentDateTime() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var today = date.getDate();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+    var milliseconds = date.getMilliseconds();
+    return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
+};
+
 //==== 내 정보가져오는 함수 =========================
 function getMyInfo(email) {
     return new Promise(function (resolve, reject) {
@@ -115,7 +128,8 @@ function updateMyInfo(email, data) {
                     'user_education': data.user_education,
                     'user_major': data.user_major,
                     'user_location': data.user_location,
-                    'user_field': data.user_field
+                    'user_field': data.user_field,
+                    'user_updated_at' : getCurrentDateTime()
                 }
             }
         ).then(() => {
@@ -134,7 +148,8 @@ function updateMyIntro(email, data) {
             {
                 $set: {
                     'user_introduction': data.user_introduction,
-                    'user_history': data.user_history
+                    'user_history': data.user_history,
+                    'user_updated_at' : getCurrentDateTime() // 유저데이터 수정시점
                 }
             }
         ).then(() => {
@@ -152,7 +167,8 @@ function updateLocation(email, data) {
             { user_email: email },
             {
                 $set: {
-                    'user_location': data.user_location
+                    'user_location': data.user_location,
+                    'user_updated_at' : getCurrentDateTime()
                 }
             }
         ).then(() => {
@@ -170,7 +186,8 @@ function updateField(email, data) {
             { user_email: email },
             {
                 $set: {
-                    'user_field': data.user_field
+                    'user_field': data.user_field,
+                    'user_updated_at' : getCurrentDateTime()
                 }
             }
         ).then(() => {
@@ -191,7 +208,8 @@ function updateSurvey(email, data) {
                     'user_selection.q1': data.user_selection.q1,
                     'user_selection.q2': data.user_selection.q2,
                     'user_selection.q3': data.user_selection.q3,
-                    'user_selection.q4': data.user_selection.q4
+                    'user_selection.q4': data.user_selection.q4,
+                    'user_updated_at' : getCurrentDateTime()
                 }
             }
         ).then(() => {

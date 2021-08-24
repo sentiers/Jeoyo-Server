@@ -7,6 +7,19 @@ var UserData = require('../models/userData');
 var User = require('../models/user');
 // ----------------------------------------------------------------
 
+// 현재 날짜, 시간 반환하는 함수
+function getCurrentDateTime() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var today = date.getDate();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+    var milliseconds = date.getMilliseconds();
+    return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
+};
+
 //==== 유저 등록 함수 =========================
 function registerUser(data) {
     return new Promise(function (resolve, reject) {
@@ -28,6 +41,7 @@ function registerUser(data) {
                         var newUserData = new UserData();
                         newUserData.user_name = data.user_name;
                         newUserData.user_email = data.user_email;
+                        newUserData.user_created_at = getCurrentDateTime(); // 유저데이터생성시점
                         newUserData.save((err) => { // 유저 데이터 저장
                             if (err) {
                                 reject(500);

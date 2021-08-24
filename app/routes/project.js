@@ -1,10 +1,9 @@
 // ----------------------------------------------------------------
 var router = require('express').Router();
 var ObjectId = require('mongodb').ObjectID;
-var moment = require('moment');
-require('moment-timezone');
-moment.tz.setDefault("Asia/Seoul");
 var UserData = require('../models/userData');
+var Post = require('../models/post');
+var Project = require('../models/project');
 // ----------------------------------------------------------------
 
 //====테스팅 용도 =============================

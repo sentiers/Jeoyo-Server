@@ -17,6 +17,7 @@ var user = require(__dirname + '/app/routes/user');
 var explore = require(__dirname + '/app/routes/explore');
 var home = require(__dirname + '/app/routes/home');
 var mypage = require(__dirname + '/app/routes/mypage');
+var project = require(__dirname + '/app/routes/project');
 
 //==== MONGOOOSE AND MONGODB ==================================
 var url = 'mongodb+srv://dbUser:2021JeoyoApp@jeoyocluster.evzle.mongodb.net/JeoyoDatabase?retryWrites=true&w=majority';
@@ -40,6 +41,7 @@ app.use('/user', passport.authenticate('jwt', { session: false }), user);
 app.use('/explore', passport.authenticate('jwt', { session: false }), explore);
 app.use('/home', passport.authenticate('jwt', { session: false }), home);
 app.use('/mypage', passport.authenticate('jwt', { session: false }), mypage);
+app.use('/project', passport.authenticate('jwt', { session: false }), project);
 
 //==== LISTEN TO THE SERVER =================================
 app.listen(process.env.PORT || 8080,

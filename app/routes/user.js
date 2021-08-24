@@ -77,11 +77,11 @@ function getLocationFieldUsers(location, field) {
     return new Promise(function (resolve, reject) {
         UserData.find(
             {
-                user_location: { $elemMatch: { $eq: location } },
-                user_field: { $elemMatch: { $eq: field } },
-                'user_active.profile': 1
+                user_location: { $elemMatch: { $eq: location } }, // 지역필터
+                user_field: { $elemMatch: { $eq: field } }, // 직무필터
+                'user_active.profile': 1 // 유저가 프로필공개에 동의했을시
             }
-        ).sort({ "user_updated_at": -1 }).then(user => {
+        ).sort({ "user_updated_at": -1 }).then(user => { // 수정일시 최신순 정렬
             resolve([200, user]);
         }).catch((err) => {
             reject(500);

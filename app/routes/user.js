@@ -14,9 +14,8 @@ function getUserById(idData) {
             _id: idData
         }).then(user => {
             resolve([200, user]);
-        }).catch((err) => {
-            console.log("err");
-            reject(404); // remove from likedusers
+        }).catch((err) => { // 유저가 삭제되거나 찾을수없을때
+            reject(404);
         });
     });
 };

@@ -67,9 +67,7 @@ function getPostById(email, idData) {
                     reject(401);
                 });
             }
-        }).catch((err) => { //6122a16b36157e2bd073a6df
-            console.log("err"); // remove from likedposts
-
+        }).catch((err) => { // 게시물이 삭제되거나 찾을수없을때
             reject(404);
         });
     });

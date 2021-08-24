@@ -14,6 +14,8 @@ function getCurrentDate() {
     return new Date(Date.UTC(year, month, today));
 };
 
+// ----------------------------------------------------------------
+
 //==== 인기있는 프로젝트 =========================
 function getPopularProjects() {
     return new Promise(function (resolve, reject) {

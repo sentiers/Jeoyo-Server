@@ -20,6 +20,8 @@ function getCurrentDateTime() {
     return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
 };
 
+// ----------------------------------------------------------------
+
 //==== 유저 등록 함수 =========================
 function registerUser(data) {
     return new Promise(function (resolve, reject) {

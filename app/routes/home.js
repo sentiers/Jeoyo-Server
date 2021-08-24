@@ -13,6 +13,8 @@ function getCurrentDate() {
     return new Date(Date.UTC(year, month, today));
 };
 
+// ----------------------------------------------------------------
+
 //==== 프로젝트 최신 3개씩 반환하는 함수=========================
 function getRecentProjects() {
     return new Promise(function (resolve, reject) {

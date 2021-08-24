@@ -17,6 +17,8 @@ function getCurrentDateTime() {
     return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
 };
 
+// ----------------------------------------------------------------
+
 //==== 내 정보가져오는 함수 =========================
 function getMyInfo(email) {
     return new Promise(function (resolve, reject) {

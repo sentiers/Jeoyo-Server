@@ -36,7 +36,7 @@ function isEmailExist(email) {
     return new Promise(function (resolve, reject) {
         User.findOne({
             user_email: email
-        }).then((user) => { 
+        }).then((user) => {
             if (user == null) { // 존재하면 1, 존재하지않으면 0을 보냄
                 resolve([200, 0]);
             } else {
@@ -44,6 +44,37 @@ function isEmailExist(email) {
             }
         }).catch((err) => {
             reject(500);
+        });
+    });
+};
+
+//==== 팀원평가 함수 =========================
+function evaluateUser(email, idData, data) {
+    return new Promise(function (resolve, reject) {
+        UserData.findOne({
+            user_email: email
+        }).then((user) => {
+            UserData.updateOne(
+                { _id: idData },
+                {
+                    $set: {
+                        'user_evaluation.member_name': user.user_name, // 현재평가하는사람
+                        'user_evaluation.evaluation_date': getCurrentDate(), // 현재날짜
+                        'user_evaluation.project_title': data.project_title, // 프로젝트제목
+                        'user_evaluation.q1': data.user_evaluation.q1, // 유저평가
+                        'user_evaluation.q2': data.user_evaluation.q2,
+                        'user_evaluation.q3': data.user_evaluation.q3,
+                        'user_evaluation.q4': data.user_evaluation.q4,
+                        'user_evaluation.q5': data.user_evaluation.q5,
+                    }
+                }
+            ).then(() => {
+                resolve(200);
+            }).catch((err) => {
+                reject(404);
+            })
+        }).catch((err) => {
+            reject(401);
         });
     });
 };
@@ -122,11 +153,11 @@ router.post('/update/:id', function (req, res, next) {
 
 //==== id와 일치하는 팀원 평가 =============================
 router.post('/eval/:id', function (req, res, next) {
-    functionname()
+    evaluateUser(req.user.user_email, req.params.id, req.body)
         .then((code) => {
-            res.status(code).send(code + ": 성공");
+            res.status(code).send(code + ": 평가 성공");
         }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 실패");
+            res.status(errcode).send(errcode + ": 평가 실패");
         });
 });
 

@@ -42,6 +42,7 @@ function registerUser(data) {
                         newUserData.user_name = data.user_name;
                         newUserData.user_email = data.user_email;
                         newUserData.user_created_at = getCurrentDateTime(); // 유저데이터생성시점
+                        newUserData.user_updated_at = getCurrentDateTime();
                         newUserData.save((err) => { // 유저 데이터 저장
                             if (err) {
                                 reject(500);

@@ -81,7 +81,7 @@ function getLocationFieldUsers(location, field) {
                 user_field: { $elemMatch: { $eq: field } },
                 'user_active.profile': 1
             }
-        ).then(user => {
+        ).sort({ "user_updated_at": -1 }).then(user => {
             resolve([200, user]);
         }).catch((err) => {
             reject(500);
@@ -97,7 +97,7 @@ function getLocationUsers(location) {
                 user_location: { $elemMatch: { $eq: location } },
                 'user_active.profile': 1
             }
-        ).then(user => {
+        ).sort({ "user_updated_at": -1 }).then(user => {
             resolve([200, user]);
         }).catch((err) => {
             reject(500);
@@ -113,7 +113,7 @@ function getFieldUsers(field) {
                 user_field: { $elemMatch: { $eq: field } },
                 'user_active.profile': 1
             }
-        ).then(user => {
+        ).sort({ "user_updated_at": -1 }).then(user => {
             resolve([200, user]);
         }).catch((err) => {
             reject(500);
@@ -126,12 +126,11 @@ function getAllUsers() {
     return new Promise(function (resolve, reject) {
         UserData.find({
             'user_active.profile': 1
-        })
-            .then(user => {
-                resolve([200, user]);
-            }).catch((err) => {
-                reject(500);
-            });
+        }).sort({ "user_updated_at": -1 }).then(user => {
+            resolve([200, user]);
+        }).catch((err) => {
+            reject(500);
+        });
     });
 };
 

@@ -19,25 +19,28 @@ function getRecentProjects() {
         Post.find({
             post_division: { $in: ["공모전", "대외활동"] },
             post_recruit_end: { $gte: getCurrentDate() }
-        }).limit(3).then((activity) => { // 공모전 게시물 3개 제한
-            Post.find({
-                post_division: "스터디",
-                post_recruit_end: { $gte: getCurrentDate() }
-            }).limit(3).then((study) => { // 스터디 게시물 3개 제한
+        }).sort({ "post_created_at": -1 }) // 최신순
+            .limit(3).then((activity) => { // 공모전 게시물 3개 제한
                 Post.find({
-                    post_division: "동아리",
+                    post_division: "스터디",
                     post_recruit_end: { $gte: getCurrentDate() }
-                }).limit(3).then((club) => { // 동아리 게시물 3개 제한
-                    resolve([200, activity, study, club]);
-                }).catch((err) => {
-                    reject(500);
-                });
+                }).sort({ "post_created_at": -1 })
+                    .limit(3).then((study) => { // 스터디 게시물 3개 제한
+                        Post.find({
+                            post_division: "동아리",
+                            post_recruit_end: { $gte: getCurrentDate() }
+                        }).sort({ "post_created_at": -1 })
+                            .limit(3).then((club) => { // 동아리 게시물 3개 제한
+                                resolve([200, activity, study, club]);
+                            }).catch((err) => {
+                                reject(500);
+                            });
+                    }).catch((err) => {
+                        reject(500);
+                    });
             }).catch((err) => {
                 reject(500);
             });
-        }).catch((err) => {
-            reject(500);
-        });
     });
 };
 

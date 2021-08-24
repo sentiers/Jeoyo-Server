@@ -203,7 +203,7 @@ function getDivisionLocationFieldSortPosts(division, location, field, sort) {
                     post_field: field,
                     post_recruit_end: { $gte: getCurrentDate() }
                 }
-            ).then(post => {
+            ).sort({ "post_created_at": -1 }).then(post => { // 최신순 정렬
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -222,7 +222,7 @@ function getDivisionLocationFieldPosts(division, location, field) {
                 post_field: field,
                 post_recruit_end: { $gte: getCurrentDate() }
             }
-        ).then(post => {
+        ).sort({ "post_created_at": -1 }).then(post => {
             resolve([200, post]);
         }).catch((err) => {
             reject(500);
@@ -264,7 +264,7 @@ function getDivisionLocationSortPosts(division, location, sort) {
                     post_location: { $elemMatch: { $eq: location } },
                     post_recruit_end: { $gte: getCurrentDate() }
                 }
-            ).then(post => {
+            ).sort({ "post_created_at": -1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -308,7 +308,7 @@ function getDivisionFieldSortPosts(division, field, sort) {
                     post_field: field,
                     post_recruit_end: { $gte: getCurrentDate() }
                 }
-            ).then(post => {
+            ).sort({ "post_created_at": -1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -326,7 +326,7 @@ function getDivisionLocationPosts(division, location) {
                 post_location: { $elemMatch: { $eq: location } },
                 post_recruit_end: { $gte: getCurrentDate() }
             }
-        ).then(post => {
+        ).sort({ "post_created_at": -1 }).then(post => {
             resolve([200, post]);
         }).catch((err) => {
             reject(500);
@@ -343,7 +343,7 @@ function getDivisionFieldPosts(division, field) {
                 post_field: field,
                 post_recruit_end: { $gte: getCurrentDate() }
             }
-        ).then(post => {
+        ).sort({ "post_created_at": -1 }).then(post => {
             resolve([200, post]);
         }).catch((err) => {
             reject(500);
@@ -383,7 +383,7 @@ function getDivisionSortPosts(division, sort) {
                     post_division: division,
                     post_recruit_end: { $gte: getCurrentDate() }
                 }
-            ).then(post => {
+            ).sort({ "post_created_at": -1 }).then(post => {
                 resolve([200, post]);
             }).catch((err) => {
                 reject(500);
@@ -400,7 +400,7 @@ function getDivisionPosts(division) {
                 post_division: division,
                 post_recruit_end: { $gte: getCurrentDate() }
             }
-        ).then(post => {
+        ).sort({ "post_created_at": -1 }).then(post => {
             resolve([200, post]);
         }).catch((err) => {
             reject(500);
@@ -413,7 +413,7 @@ function getAllPosts() {
     return new Promise(function (resolve, reject) {
         Post.find({
             post_recruit_end: { $gte: getCurrentDate() }
-        }).then(data => {
+        }).sort({ "post_created_at": -1 }).then(data => {
             resolve([200, data]);
         }).catch((err) => {
             reject(500);
@@ -457,6 +457,7 @@ function createPost(email, data) {
             newPost.post_user_name = user.user_name;
             newPost.post_recruit_start = getCurrentDate(); // 모집시작 현재날짜
             newPost.post_created_at = getCurrentDateTime(); // 게시물생성시점 현재날짜시간
+            newPost.post_updated_at = getCurrentDateTime();
             newPost.save((err) => { // 게시물 저장
                 if (err) {
                     reject(500);

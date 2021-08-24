@@ -250,7 +250,6 @@ router.get('/', function (req, res, next) {
         .then((data) => {
             res.status(data[0]).send(data[1]);
         }).catch((errcode) => {
-            console.log("ddd");
             res.status(errcode).send(errcode + ": 유저 정보 가져오기 실패");
         });
 });

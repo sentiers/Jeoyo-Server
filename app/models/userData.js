@@ -70,7 +70,9 @@ var userDataSchema = new Schema({
             type: Number,
             default: 1
         }
-    }
+    },
+    user_created_at: Date, // 유저데이터 생성시점 YYYY-MM-DD HH:mm:ss
+    user_updated_at: Date, // 유저정보 수정시점 YYYY-MM-DD HH:mm:ss
 });
 
 var UserData = mongoose.model('UserDatas', userDataSchema);

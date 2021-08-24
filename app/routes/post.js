@@ -413,12 +413,11 @@ function getAllPosts() {
     return new Promise(function (resolve, reject) {
         Post.find({
             post_recruit_end: { $gte: getCurrentDate() }
-        })
-            .then(data => {
-                resolve([200, data]);
-            }).catch((err) => {
-                reject(500);
-            });
+        }).then(data => {
+            resolve([200, data]);
+        }).catch((err) => {
+            reject(500);
+        });
     });
 };
 
@@ -621,7 +620,7 @@ router.get('/', function (req, res, next) {
 router.get('/delete/:id', function (req, res, next) {
     deletePostById(req.user.user_email, req.params.id)
         .then((code) => {
-            res.status(code).send(code + "게시물 삭제 성공");
+            res.status(code).send(code + ": 게시물 삭제 성공");
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 게시물 삭제 실패");
         });

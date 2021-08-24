@@ -17,13 +17,16 @@ var userDataSchema = new Schema({
     user_email: String, // 이메일
     user_introduction: String, // 소개
     user_history: [], // 활동 이력
-    user_evaluation: { // 받은 평가
-        communicative: Number, // 소통이 원활해요
-        trusted: Number, // 신뢰할 수 있어요
-        kind: Number, // 친절하고 매너가 좋아요
-        hardworker: Number, // 성실하고 열정적이에요
-        competent: Number // 기대이상의 퍼포먼스를 보여줘요
-    },
+    user_evaluation: [{ // 받은 평가
+        member_name: String,
+        project_title: String,
+        evaluation_date: Date,
+        q1: String, // 팀원을 한마디로?
+        q2: String, // 팀원이 기여한부분?
+        q3: String, // 팀원의 업무스타일?
+        q4: String, // 팀원에게 배울점?
+        q5: String // 팀원에게 피드백?
+    }],
     user_projects: [], // 나의 프로젝트
     user_likedUsers: [], // 관심팀원
     user_likedPosts: [], // 관심 프로젝트

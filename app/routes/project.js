@@ -48,6 +48,34 @@ function isEmailExist(email) {
     });
 };
 
+//==== 프로젝트 생성하는 함수 =========================
+function createProject(email, data) {
+    return new Promise(function (resolve, reject) {
+        var newProject = new Project(data);
+        UserData.findOne({
+            user_email: email
+        }).then(user => {
+            newProject.project_title = data.project_title;
+            newProject.project_leader.id = user._id; // 팀 리더 정보
+            newProject.project_leader.email = user.user_email;
+            newProject.project_leader.name = user.user_name;
+            newProject.project_leader.img = user.user_img;
+            newProject.save((err) => { // 프로젝트 저장
+                if (err) {
+                    reject(500);
+                } else {
+                    resolve(201);
+                }
+            });
+        }).catch((err) => {
+            reject(401);
+        });
+    });
+};
+
+
+
+
 //==== 팀원평가 함수 =========================
 function evaluateUser(email, idData, data) {
     return new Promise(function (resolve, reject) {
@@ -133,11 +161,11 @@ router.get('/end/:id', function (req, res, next) {
 
 //==== 프로젝트 생성 =============================
 router.post('/create', function (req, res, next) {
-    functionname()
+    createProject(req.user.user_email, req.body)
         .then((code) => {
-            res.status(code).send(code + ": 성공");
+            res.status(code).send(code + ": 프로젝트 생성 성공");
         }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 실패");
+            res.status(errcode).send(errcode + ": 프로젝트 생성 실패");
         });
 });
 

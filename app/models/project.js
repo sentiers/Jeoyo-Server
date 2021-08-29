@@ -17,7 +17,10 @@ var ProjectSchema = new Schema({
         name: String,
         img: String
     }],
-    post_active: Number // 진행중여부 (0: 종료된 프로젝트, 1: 진행중인 프로젝트)
+    project_active: { // (1: 진행중, 2: 평가중, 3: 종료)
+        type: Number,
+        default: 1
+    }
 });
 
 var Project = mongoose.model('Projects', ProjectSchema);

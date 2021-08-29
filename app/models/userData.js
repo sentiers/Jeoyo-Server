@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var ObjectId = require('mongodb').ObjectID;
 
 // 유저 데이터 스키마
 var userDataSchema = new Schema({
@@ -21,13 +22,22 @@ var userDataSchema = new Schema({
         member_name: String,
         project_title: String,
         evaluation_date: Date,
-        q1: String, // 팀원을 한마디로?
-        q2: String, // 팀원이 기여한부분?
-        q3: String, // 팀원의 업무스타일?
-        q4: String, // 팀원에게 배울점?
-        q5: String // 팀원에게 피드백?
+        q1: String, // 팀원을 한마디로
+        q2: String, // 팀원이 기여한부분
+        q3: String, // 팀원의 업무스타일
+        q4: String, // 팀원에게 배울점
+        q5: String // 팀원에게 피드백
     }],
-    user_projects: [], // 나의 프로젝트
+    user_projects: [{ // 진행중인 프로젝트
+        project_id: ObjectId,
+        member: [{
+            id: ObjectId, // email이 될수도있음
+            eval: { // 평가유무 (0: 평가하지않음, 1: 평가함)
+                type: Number,
+                default: 0
+            }
+        }]
+    }],
     user_likedUsers: [], // 관심팀원
     user_likedPosts: [], // 관심 프로젝트
     user_recent_posts: [], // 최근 본 프로젝트

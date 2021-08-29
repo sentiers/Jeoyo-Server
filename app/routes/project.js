@@ -73,8 +73,26 @@ function createProject(email, data) {
     });
 };
 
+//==== 프로젝트 멤버정보 채우는 함수 =========================
+function addMemberInfo(email, data) {
+    return new Promise(function (resolve, reject) {
 
+    });
+};
 
+//==== 멤버별로 프로젝트정보 넣는 함수 =========================
+function addUserProject(email, data) {
+    return new Promise(function (resolve, reject) {
+
+    });
+};
+
+//==== 프로젝트 수정하는 함수 =========================
+function updateProject(email, data) {
+    return new Promise(function (resolve, reject) {
+
+    });
+};
 
 //==== 팀원평가 함수 =========================
 function evaluateUser(email, idData, data) {
@@ -159,6 +177,16 @@ router.get('/end/:id', function (req, res, next) {
         });
 });
 
+//==== 프로젝트 평가페이지 =============================
+router.get('/eval/:id', function (req, res, next) {
+    functionname()
+        .then((code) => {
+            res.status(code).send(code + ": 성공");
+        }).catch((errcode) => {
+            res.status(errcode).send(errcode + ": 실패");
+        });
+});
+
 //==== 프로젝트 생성 =============================
 router.post('/create', function (req, res, next) {
     createProject(req.user.user_email, req.body)
@@ -180,13 +208,13 @@ router.post('/update/:id', function (req, res, next) {
 });
 
 //==== id와 일치하는 팀원 평가 =============================
-router.post('/eval/:id', function (req, res, next) {
+router.post('/eval/:id/:userid', function (req, res, next) {
     evaluateUser(req.user.user_email, req.params.id, req.body)
         .then((code) => {
             res.status(code).send(code + ": 평가 성공");
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 평가 실패");
-        });
+        }); s
 });
 
 // ----------------------------------------------------------------

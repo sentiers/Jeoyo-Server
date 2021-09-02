@@ -160,6 +160,9 @@ router.get('/:id', function (req, res, next) {
 });
 
 //==== 프로젝트 삭제 =============================
+// 프로젝트삭제는 모든팀원이 탈퇴할수있는거로? 
+//-	팀장이 삭제: 프로젝트전체삭제?
+//-	팀원이 삭제: 탈퇴 기능?
 router.get('/delete/:id', function (req, res, next) {
     functionname()
         .then((code) => {

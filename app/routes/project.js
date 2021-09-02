@@ -32,6 +32,7 @@ function getCurrentDateTime() {
 // ----------------------------------------------------------------
 
 //==== 해당 이메일이 존재하는지 확인하는 함수 =========================
+// 자기자신 추가못하게 reject하는 기능 추가하기
 function isEmailExist(email) {
     return new Promise(function (resolve, reject) {
         User.findOne({

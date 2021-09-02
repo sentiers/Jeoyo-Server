@@ -96,6 +96,7 @@ function updateProject(email, data) {
 };
 
 //==== 팀원평가 함수 =========================
+// 자기자신은 평가못함
 function evaluateUser(email, idData, data) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
@@ -179,6 +180,8 @@ router.get('/end/:id', function (req, res, next) {
 });
 
 //==== 프로젝트 평가페이지 =============================
+// 팀원평가 모두 했는지 확인도 하는 기능 필요
+// 자기자신은 평가못함?
 router.get('/eval/:id', function (req, res, next) {
     functionname()
         .then((code) => {

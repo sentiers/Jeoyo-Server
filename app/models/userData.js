@@ -30,12 +30,10 @@ var userDataSchema = new Schema({
     }],
     user_projects: [{ // 진행중인 프로젝트
         project_id: ObjectId,
-        member: [{
+        member_to_eval: [{
             id: ObjectId, // email이 될수도있음
-            eval: { // 평가유무 (0: 평가하지않음, 1: 평가함)
-                type: Number,
-                default: 0
-            }
+            name: String,
+            img: String
         }]
     }],
     user_likedUsers: [], // 관심팀원

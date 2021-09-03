@@ -1,5 +1,6 @@
 // ----------------------------------------------------------------
 var router = require('express').Router();
+var delay = require('delay');
 var ObjectId = require('mongodb').ObjectID;
 var UserData = require('../models/userData');
 var User = require('../models/user');
@@ -95,7 +96,7 @@ function createProject(email, data) {
                 if (err) {
                     reject(500);
                 } else {
-                    resolve(201);
+                    resolve([201, newProject._id, data.user_email]);
                 }
             });
         }).catch((err) => {
@@ -105,16 +106,43 @@ function createProject(email, data) {
 };
 
 //==== 프로젝트 멤버정보 채우는 함수 =========================
-function addMemberInfo(email, data) {
+function addMemberInfo(idData, emails) {
     return new Promise(function (resolve, reject) {
-
+        const fillInfo = async (emails) => {
+            for (const email of emails) {
+                await delay().then(() => {
+                    UserData.findOne(
+                        { user_email: email }
+                    ).then((user) => {
+                        Project.updateOne(
+                            { _id: idData },
+                            {
+                                $push: {
+                                    project_member: {
+                                        id: user._id,
+                                        email: user.user_email,
+                                        name: user.user_name,
+                                        img: user.user_img
+                                    }
+                                }
+                            }
+                        ).exec()
+                    })
+                })
+            }
+        }
+        fillInfo(emails);
+        resolve();
     });
 };
 
 //==== 멤버별로 프로젝트정보 넣는 함수 =========================
-function addUserProject(email, data) {
+function addUserProject(email, idData, emails) {
     return new Promise(function (resolve, reject) {
-
+        console.log(email);
+        console.log(idData);
+        console.log(emails);
+        resolve();
     });
 };
 
@@ -126,7 +154,6 @@ function updateProject(email, data) {
 };
 
 //==== 팀원평가 함수 =========================
-// 자기자신은 평가못함
 function evaluateUser(email, idData, data) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
@@ -213,8 +240,6 @@ router.get('/end/:id', function (req, res, next) {
 });
 
 //==== 프로젝트 평가페이지 =============================
-// 팀원평가 모두 했는지 확인도 하는 기능 필요
-// 자기자신은 평가못함?
 router.get('/eval/:id', function (req, res, next) {
     functionname()
         .then((code) => {
@@ -227,8 +252,10 @@ router.get('/eval/:id', function (req, res, next) {
 //==== 프로젝트 생성 =============================
 router.post('/create', function (req, res, next) {
     createProject(req.user.user_email, req.body)
-        .then((code) => {
-            res.status(code).send(code + ": 프로젝트 생성 성공");
+        .then((data) => {
+            addMemberInfo(data[1], data[2]); // 프로젝트 멤버정보 채우는 함수
+            addUserProject(req.user.user_email, data[1], data[2]); // 멤버별로 프로젝트정보 넣는 함수
+            res.status(data[0]).send(data[0] + ": 프로젝트 생성 성공");
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 프로젝트 생성 실패");
         });

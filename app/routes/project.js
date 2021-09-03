@@ -37,8 +37,8 @@ function getAllMyProject() {
     return new Promise(function (resolve, reject) {
         Project.find()
             .sort({ "project_active": 1 }) // 진행중(1) - 평가중(2) - 종료(3) 순
-            .then(data => {
-                resolve([200, data]);
+            .then(project => {
+                resolve([200, project]);
             }).catch((err) => {
                 reject(500);
             });
@@ -61,6 +61,20 @@ function isEmailExist(email, emailData) {
             }
         }).catch((err) => {
             reject(500);
+        });
+    });
+};
+
+
+//==== 프로젝트 id 별로 조회하는 함수 =========================
+function getProjectById(idData) {
+    return new Promise(function (resolve, reject) {
+        Project.findOne({
+            _id: idData
+        }).then(project => {
+            resolve([200, project]);
+        }).catch((err) => {
+            reject(404);
         });
     });
 };
@@ -167,11 +181,11 @@ router.get('/check/:email', function (req, res, next) {
 
 //==== id와 일치하는 프로젝트 조회 =============================
 router.get('/:id', function (req, res, next) {
-    functionname()
+    getProjectById(req.params.id)
         .then((code) => {
-            res.status(code).send(code + ": 성공");
+            res.status(code).send(code + ": 프로젝트 가져오기 성공");
         }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 실패");
+            res.status(errcode).send(errcode + ": 프로젝트 가져오기 실패");
         });
 });
 

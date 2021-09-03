@@ -32,7 +32,8 @@ function getCurrentDateTime() {
 // ----------------------------------------------------------------
 
 //==== 모든 프로젝트 가져오는 함수 =========================
-function getAllProject() {
+// user_project에 있는 프로젝트만 쭉가져오기
+function getAllMyProject() {
     return new Promise(function (resolve, reject) {
         Project.find()
             .sort({ "project_active": 1 }) // 진행중(1) - 평가중(2) - 종료(3) 순
@@ -45,16 +46,18 @@ function getAllProject() {
 };
 
 //==== 해당 이메일이 존재하는지 확인하는 함수 =========================
-// 자기자신 추가못하게 reject하는 기능 추가하기
-function isEmailExist(email) {
+function isEmailExist(email, emailData) {
     return new Promise(function (resolve, reject) {
         User.findOne({
-            user_email: email
+            user_email: emailData
         }).then((user) => {
-            if (user == null) { // 존재하면 1, 존재하지않으면 0을 보냄
-                resolve([200, 0]);
-            } else {
-                resolve([200, 1]);
+            if (user == null) { // 존재하지않는경우
+                reject(404);
+            } else if (user.user_email == email) { // 자기자신 추가 못하게
+                reject(403)
+            }
+            else { // 찾은경우
+                resolve(200);
             }
         }).catch((err) => {
             reject(500);
@@ -142,9 +145,9 @@ function evaluateUser(email, idData, data) {
 
 // ----------------------------------------------------------------
 
-//==== 진행중인 프로젝트드 조회 =============================
+//==== 현재유저의 진행중인 프로젝트들 조회 =============================
 router.get('/', function (req, res, next) {
-    getAllProject()
+    getAllMyProject()
         .then((data) => {
             res.status(data[0]).send(data[1]);
         }).catch((errcode) => {
@@ -154,11 +157,11 @@ router.get('/', function (req, res, next) {
 
 //==== 이메일과 일치하는 유저가 있는지 확인 =============================
 router.get('/check/:email', function (req, res, next) {
-    isEmailExist(req.params.email)
-        .then((data) => {
-            res.status(data[0]).send({ result: data[1] });
+    isEmailExist(req.user.user_email, req.params.email)
+        .then((code) => {
+            res.status(code).send(code + ": 유저 추가 가능");
         }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 유저 확인 실패");
+            res.status(errcode).send(errcode + ": 유저 추가 불가능");
         });
 });
 

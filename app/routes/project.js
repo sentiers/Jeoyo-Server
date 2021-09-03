@@ -31,6 +31,19 @@ function getCurrentDateTime() {
 
 // ----------------------------------------------------------------
 
+//==== 모든 프로젝트 가져오는 함수 =========================
+function getAllProject() {
+    return new Promise(function (resolve, reject) {
+        Project.find()
+            .sort({ "project_active": 1 }) // 진행중(1) - 평가중(2) - 종료(3) 순
+            .then(data => {
+                resolve([200, data]);
+            }).catch((err) => {
+                reject(500);
+            });
+    });
+};
+
 //==== 해당 이메일이 존재하는지 확인하는 함수 =========================
 // 자기자신 추가못하게 reject하는 기능 추가하기
 function isEmailExist(email) {
@@ -131,11 +144,11 @@ function evaluateUser(email, idData, data) {
 
 //==== 진행중인 프로젝트드 조회 =============================
 router.get('/', function (req, res, next) {
-    functionname()
-        .then((code) => {
-            res.status(code).send(code + ": 성공");
+    getAllProject()
+        .then((data) => {
+            res.status(data[0]).send(data[1]);
         }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 실패");
+            res.status(errcode).send(errcode + ": 프로젝트 가져오기 실패");
         });
 });
 

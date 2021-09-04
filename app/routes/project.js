@@ -106,14 +106,11 @@ function createProject(email, data) {
 };
 
 //==== 프로젝트 멤버정보 채우는 함수 =========================
-function addMemberInfo(idData, emails, emailData) {
+function addMemberInfo(idData, emails) {
     return new Promise(function (resolve, reject) {
-
         var fillInfo = async (emails) => {
-
             for (const email of emails) { // 이메일당 루프
                 await delay().then(() => {
-
                     UserData.findOne(
                         { user_email: email }
                     ).then((user) => {
@@ -134,63 +131,29 @@ function addMemberInfo(idData, emails, emailData) {
                 })
             }
         }
-
+        
         fillInfo(emails).then(() => {
-            Project.findOne({
-                _id: idData
-            }).then(project => {
-                emails.push(emailData);
-                resolve([idData, project.project_leader, emails]);
-            }).catch((err) => {
-                reject();
-            });
+            resolve()
         });
 
     });
 };
 
 //==== 멤버별로 프로젝트정보 넣는 함수 =========================
-function addUserProject(idData, leaderData, emails) {
+function addUserProject(idData, emails, emailData) {
     return new Promise(function (resolve, reject) {
         var fillUserProject = async (idData, emails, memberData) => {
             for (const email of emails) { // 이메일당 루프
                 await delay().then(() => {
-                    UserData.updateOne(
-                        { user_email: email },
-                        {
-                            $push: {
-                                user_projects: {
-                                    _id: idData,
-                                    member_to_eval: memberData
-                                }
-                            }
-                        }
-                    ).then(() => {
-                        UserData.updateOne(
-                            { user_email: email },
-                            {
-                                $pull: {
-                                    'user_projects.$[].member_to_eval': { email: email }
-                                }
-                            }
-                        ).exec()
-                    })
+                   
                 })
             }
         }
 
-        Project.findOne({
-            _id: idData
-        }).then(project => {
-            var members = project.project_member;
-            members.push(leaderData);
-            fillUserProject(idData, emails, members)
-                .then(() => {
-                    resolve();
-                })
-        }).catch((err) => {
-            reject();
-        });
+        fillUserProject(idData, emails, emailData)
+            .then(() => {
+                resolve();
+            })
     });
 };
 
@@ -300,11 +263,9 @@ router.get('/eval/:id', function (req, res, next) {
 //==== 프로젝트 생성 =============================
 router.post('/create', function (req, res, next) {
     createProject(req.user.user_email, req.body).then((data) => {
-        addMemberInfo(data[1], data[2], req.user.user_email).then((projectData) => {// 프로젝트 멤버정보 채우는 함수
-            addUserProject(projectData[0], projectData[1], projectData[2]).then(() => {// 멤버별로 프로젝트정보 넣는 함수
-                res.status(data[0]).send(data[0] + ": 프로젝트 생성 성공");
-            })
-        })
+        addMemberInfo(data[1], data[2]);// 프로젝트 멤버정보 채우는 함수
+        addUserProject(data[1], data[2], req.user.user_email);// 멤버별로 프로젝트정보 넣는 함수
+        res.status(data[0]).send(data[0] + ": 프로젝트 생성 성공");
     }).catch((errcode) => {
         res.status(errcode).send(errcode + ": 프로젝트 생성 실패");
     });

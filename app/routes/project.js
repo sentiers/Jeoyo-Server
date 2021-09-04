@@ -88,7 +88,7 @@ function createProject(email, data) {
             user_email: email
         }).then(user => {
             newProject.project_title = data.project_title;
-            newProject.project_leader.id = user._id; // 팀 리더 정보
+            newProject.project_leader._id = user._id; // 팀 리더 정보
             newProject.project_leader.email = user.user_email;
             newProject.project_leader.name = user.user_name;
             newProject.project_leader.img = user.user_img;
@@ -109,7 +109,7 @@ function createProject(email, data) {
 function addMemberInfo(idData, emails) {
     return new Promise(function (resolve, reject) {
         const fillInfo = async (emails) => {
-            for (const email of emails) {
+            for (const email of emails) { // 이메일당 루프
                 await delay().then(() => {
                     UserData.findOne(
                         { user_email: email }
@@ -119,7 +119,7 @@ function addMemberInfo(idData, emails) {
                             {
                                 $push: {
                                     project_member: {
-                                        id: user._id,
+                                        _id: user._id,
                                         email: user.user_email,
                                         name: user.user_name,
                                         img: user.user_img
@@ -137,11 +137,8 @@ function addMemberInfo(idData, emails) {
 };
 
 //==== 멤버별로 프로젝트정보 넣는 함수 =========================
-function addUserProject(email, idData, emails) {
+function addUserProject(emailData, idData, emails) {
     return new Promise(function (resolve, reject) {
-        console.log(email);
-        console.log(idData);
-        console.log(emails);
         resolve();
     });
 };

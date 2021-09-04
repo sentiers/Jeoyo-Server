@@ -29,9 +29,10 @@ var userDataSchema = new Schema({
         q5: String // 팀원에게 피드백
     }],
     user_projects: [{ // 진행중인 프로젝트
-        project_id: ObjectId,
+        _id: ObjectId, // 프로젝트 id
         member_to_eval: [{
-            id: ObjectId, // email이 될수도있음
+            id: ObjectId,
+            email: String,
             name: String,
             img: String
         }]

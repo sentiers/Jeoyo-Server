@@ -110,17 +110,15 @@ function addMemberInfo(idData, emails, emailData) {
     return new Promise(function (resolve, reject) {
 
         var fillInfo = async (emails) => {
-
             for (const email of emails) { // 이메일당 루프
-                await delay().then(() => {
-
+                await delay().then(() => { // 루프를 위한 딜레이
                     UserData.findOne(
                         { user_email: email }
                     ).then((user) => {
                         Project.updateOne(
                             { _id: idData },
                             {
-                                $push: {
+                                $push: { // 프로젝트 멤버정보를 채우기
                                     project_member: {
                                         _id: user._id,
                                         email: user.user_email,
@@ -135,15 +133,21 @@ function addMemberInfo(idData, emails, emailData) {
             }
         }
 
+        var resolveFunc = async (idData, emails, emailData) => {
+            await delay().then(() => {
+                Project.findOne({
+                    _id: idData
+                }).then(project => {
+                    emails.push(emailData); // 이메일 배열에 리더의 이메일도 추가
+                    resolve([project._id, project.project_leader, emails]);
+                }).catch((err) => {
+                    reject();
+                });
+            })
+        }
+
         fillInfo(emails).then(() => {
-            Project.findOne({
-                _id: idData
-            }).then(project => {
-                emails.push(emailData);
-                resolve([idData, project.project_leader, emails]);
-            }).catch((err) => {
-                reject();
-            });
+            resolveFunc(idData, emails, emailData);
         });
 
     });
@@ -154,14 +158,14 @@ function addUserProject(idData, leaderData, emails) {
     return new Promise(function (resolve, reject) {
         var fillUserProject = async (idData, emails, memberData) => {
             for (const email of emails) { // 이메일당 루프
-                await delay().then(() => {
+                await delay().then(() => { // 루프를 위한 딜레이
                     UserData.updateOne(
                         { user_email: email },
                         {
-                            $push: {
+                            $push: { // 프로젝트 정보 넣기
                                 user_projects: {
                                     _id: idData,
-                                    member_to_eval: memberData
+                                    member_to_eval: memberData // 유저데이터넣기
                                 }
                             }
                         }
@@ -169,7 +173,7 @@ function addUserProject(idData, leaderData, emails) {
                         UserData.updateOne(
                             { user_email: email },
                             {
-                                $pull: {
+                                $pull: { // 평가해야할 팀원중 자기자신은 제거
                                     'user_projects.$[].member_to_eval': { email: email }
                                 }
                             }
@@ -179,18 +183,24 @@ function addUserProject(idData, leaderData, emails) {
             }
         }
 
-        Project.findOne({
-            _id: idData
-        }).then(project => {
-            var members = project.project_member;
-            members.push(leaderData);
-            fillUserProject(idData, emails, members)
-                .then(() => {
-                    resolve();
-                })
-        }).catch((err) => {
-            reject();
-        });
+        var findOneFunc = async (idData, leaderData, emails) => {
+            await delay(100).then(() => { // 멤버데이터를 위한 딜레이
+                Project.findOne({
+                    _id: idData
+                }).then(project => {
+                    console.log(project);
+                    var members = project.project_member;
+                    members.push(leaderData); // 멤버데이터에 리더 데이터도 넣기
+                    fillUserProject(project._id, emails, members).then(() => {
+                        resolve();
+                    })
+                }).catch((err) => {
+                    reject();
+                });
+            })
+        }
+
+        findOneFunc(idData, leaderData, emails);
     });
 };
 

@@ -176,16 +176,35 @@ function endProject(email, idData) {
 };
 
 //==== 평가페이지 데이터반환 함수 =========================
-function membersToEvaluate(email, idData, data) {
+function membersToEvaluate(email, idData) {
     return new Promise(function (resolve, reject) {
         Project.findOne({
             _id: idData
         }).then(project => {
-            if (project.project_leader.email != email) {
-                reject(403); // 수정하는사람이 팀장이 아닐경우
+            if (project.project_active != 2) {
+                reject(400); // 프로젝트가 평가중이 아닐 경우
             }
             else {
-
+                UserData.aggregate([
+                    {
+                        $match: {
+                            user_email: email
+                        }
+                    },
+                    {
+                        $project: {
+                            user_project: { // id와 일치하는 프로젝트 정보만 반환
+                                '$filter': {
+                                    input: "$user_projects",
+                                    as: 'user_projects',
+                                    cond: { $eq: ['$$user_projects._id', project._id] }
+                                }
+                            }
+                        }
+                    }
+                ]).then((data) => {
+                    resolve([200, data]);
+                })
             }
         }).catch((err) => {
             reject(404);
@@ -452,11 +471,11 @@ router.get('/end/:id', function (req, res, next) {
 
 //==== 프로젝트 평가페이지 =============================
 router.get('/eval/:id', function (req, res, next) {
-    functionname()
-        .then((code) => {
-            res.status(code).send(code + ": 성공");
+    membersToEvaluate(req.user.user_email, req.params.id)
+        .then((data) => {
+            res.status(data[0]).send(data[1]);
         }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 실패");
+            res.status(errcode).send(errcode + ": 평가페이지 데이터 가져오기 실패");
         });
 });
 

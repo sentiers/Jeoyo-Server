@@ -91,6 +91,71 @@ function getProjectById(idData) {
     });
 };
 
+//==== 프로젝트 삭제하는 함수 =========================
+function deleteProject(email, idData, data) {
+    return new Promise(function (resolve, reject) {
+        Project.findOne({
+            _id: idData
+        }).then(project => {
+            if (project.project_leader.email != email) {
+                reject(403); // 수정하는사람이 팀장이 아닐경우
+            }
+            else {
+
+            }
+        }).catch((err) => {
+            reject(404);
+        });
+
+    });
+};
+
+//==== 프로젝트 종료하는 함수 =========================
+function endProject(email, idData) {
+    return new Promise(function (resolve, reject) {
+        Project.findOne({
+            _id: idData
+        }).then(project => {
+            if (project.project_leader.email != email) {
+                reject(403); // 종료하는사람이 팀장이 아닐경우
+            }
+            else {
+                Project.updateOne(
+                    { _id: idData },
+                    {
+                        $set: {
+                            project_active: 2 // 진행중(1)에서 평가중(2)로 변함
+                        }
+                    }
+                ).then(() => {
+                    resolve(200);
+                })
+            }
+        }).catch((err) => {
+            reject(404);
+        });
+
+    });
+};
+
+//==== 평가페이지 데이터반환 함수 =========================
+function membersToEvaluate(email, idData, data) {
+    return new Promise(function (resolve, reject) {
+        Project.findOne({
+            _id: idData
+        }).then(project => {
+            if (project.project_leader.email != email) {
+                reject(403); // 수정하는사람이 팀장이 아닐경우
+            }
+            else {
+
+            }
+        }).catch((err) => {
+            reject(404);
+        });
+    });
+};
+
 //==== 프로젝트 생성하는 함수 =========================
 function createProject(email, data) {
     return new Promise(function (resolve, reject) {
@@ -340,11 +405,11 @@ router.get('/delete/:id', function (req, res, next) {
 
 //==== 프로젝트 종료 =============================
 router.get('/end/:id', function (req, res, next) {
-    functionname()
+    endProject(req.user.user_email, req.params.id)
         .then((code) => {
-            res.status(code).send(code + ": 성공");
+            res.status(code).send(code + ": 프로젝트 종료 성공 - 평가 가능");
         }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 실패");
+            res.status(errcode).send(errcode + ": 프로젝트 종료 실패");
         });
 });
 

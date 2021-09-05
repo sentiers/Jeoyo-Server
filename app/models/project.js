@@ -21,7 +21,9 @@ var ProjectSchema = new Schema({
     project_active: { // (1: 진행중, 2: 평가중, 3: 종료)
         type: Number,
         default: 1
-    }
+    },
+    post_created_at: Date, // 프로젝트 생성시점 YYYY-MM-DD HH:mm:ss
+    post_updated_at: Date // 프로젝트 수정시점 YYYY-MM-DD HH:mm:ss
 });
 
 var Project = mongoose.model('Projects', ProjectSchema);

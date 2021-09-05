@@ -92,21 +92,58 @@ function getProjectById(idData) {
 };
 
 //==== 프로젝트 삭제하는 함수 =========================
-function deleteProject(email, idData, data) {
+function deleteProject(email, idData) {
     return new Promise(function (resolve, reject) {
         Project.findOne({
             _id: idData
         }).then(project => {
-            if (project.project_leader.email != email) {
-                reject(403); // 수정하는사람이 팀장이 아닐경우
+            if (project.project_active != 1) {
+                reject(400); // 프로젝트가 진행중이 아닐 경우
             }
-            else {
+            else if (project.project_leader.email == email) { // 팀장이 삭제하는 경우
+                Project.deleteOne( // 프로젝트 삭제
+                    { _id: idData }
+                ).then(() => {
+                    UserData.updateMany(
+                        {
+                            $pull: { // 각 멤버들의 프로젝트 정보 삭제
+                                'user_projects': { _id: idData }
+                            }
+                        }
+                    ).then(() => {
+                        resolve(200);
+                    })
+                }).catch(() => {
+                    reject(500);
+                });
+            }
+            else { // 팀원이 삭제하는 경우
 
+                Project.updateOne(
+                    { _id: idData },
+                    {
+                        $pull: { // 프로젝트 에서 탈퇴
+                            'project_member': { email: email }
+                        }
+                    }
+                ).then(() => {
+                    UserData.updateOne(
+                        { user_email: email },
+                        {
+                            $pull: { // 탈퇴하지만 나중에 다른사람들 프로젝트 팀원평가에는 뜸
+                                'user_projects': { _id: idData }
+                            }
+                        }
+                    ).then(() => {
+                        resolve(200);
+                    })
+                }).catch(() => {
+                    reject(500);
+                });
             }
         }).catch((err) => {
             reject(404);
         });
-
     });
 };
 
@@ -395,11 +432,11 @@ router.get('/:id', function (req, res, next) {
 
 //==== 프로젝트 삭제 =============================
 router.get('/delete/:id', function (req, res, next) {
-    functionname()
+    deleteProject(req.user.user_email, req.params.id)
         .then((code) => {
-            res.status(code).send(code + ": 성공");
+            res.status(code).send(code + ": 프로젝트 삭제 성공");
         }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 실패");
+            res.status(errcode).send(errcode + ": 프로젝트 삭제 실패");
         });
 });
 

@@ -22,8 +22,8 @@ var ProjectSchema = new Schema({
         type: Number,
         default: 1
     },
-    post_created_at: Date, // 프로젝트 생성시점 YYYY-MM-DD HH:mm:ss
-    post_updated_at: Date // 프로젝트 수정시점 YYYY-MM-DD HH:mm:ss
+    project_created_at: Date, // 프로젝트 생성시점 YYYY-MM-DD HH:mm:ss
+    project_updated_at: Date // 프로젝트 수정시점 YYYY-MM-DD HH:mm:ss
 });
 
 var Project = mongoose.model('Projects', ProjectSchema);

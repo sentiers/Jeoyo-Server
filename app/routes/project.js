@@ -34,14 +34,25 @@ function getCurrentDateTime() {
 
 //==== 모든 프로젝트 가져오는 함수 =========================
 // user_project에 있는 프로젝트만 쭉가져오기
-function getAllMyProject() {
+function getAllMyProject(email) {
     return new Promise(function (resolve, reject) {
-        Project.find()
-            .sort({ "project_active": 1 }) // 진행중(1) - 평가중(2) - 종료(3) 순
-            .then(project => {
-                resolve([200, project]);
+        UserData.findOne({ user_email: email })
+            .then((user) => {
+                Project.aggregate([
+                    {
+                        "$match": {
+                            "_id": { "$in": user.user_projects }
+                        } //??????
+                    }
+                ]).then((posts) => {
+                    resolve([200, posts]);
+                }).catch((err) => {
+                    console.log(err);
+                    reject(500);
+                });
             }).catch((err) => {
-                reject(500);
+                console.log(err);
+                reject(401);
             });
     });
 };
@@ -246,7 +257,7 @@ function evaluateUser(email, idData, data) {
 
 //==== 현재유저의 진행중인 프로젝트들 조회 =============================
 router.get('/', function (req, res, next) {
-    getAllMyProject()
+    getAllMyProject(req.user.user_email)
         .then((data) => {
             res.status(data[0]).send(data[1]);
         }).catch((errcode) => {
@@ -275,9 +286,6 @@ router.get('/:id', function (req, res, next) {
 });
 
 //==== 프로젝트 삭제 =============================
-// 프로젝트삭제는 모든팀원이 탈퇴할수있는거로? 
-//-	팀장이 삭제: 프로젝트전체삭제?
-//-	팀원이 삭제: 탈퇴 기능?
 router.get('/delete/:id', function (req, res, next) {
     functionname()
         .then((code) => {

@@ -103,6 +103,7 @@ function createProject(email, data) {
             newProject.project_leader.email = user.user_email;
             newProject.project_leader.name = user.user_name;
             newProject.project_leader.img = user.user_img;
+            newProject.project_created_at = getCurrentDateTime(); // 생성시점 현재날짜시간
             newProject.save((err) => { // 프로젝트 저장
                 if (err) {
                     reject(500);
@@ -150,7 +151,7 @@ function addMemberInfo(idData, emails, emailData) {
                     _id: idData
                 }).then(project => {
                     emails.push(emailData); // 이메일 배열에 리더의 이메일도 추가
-                    resolve([project._id, project.project_leader, emails]);
+                    resolve([project._id, project.project_leader, emails, project.project_title]);
                 }).catch((err) => {
                     reject();
                 });
@@ -165,7 +166,7 @@ function addMemberInfo(idData, emails, emailData) {
 };
 
 //==== 멤버별로 프로젝트정보 넣는 함수 =========================
-function addUserProject(idData, leaderData, emails) {
+function addUserProject(idData, leaderData, emails, title) {
     return new Promise(function (resolve, reject) {
         var fillUserProject = async (idData, emails, memberData) => {
             for (const email of emails) { // 이메일당 루프
@@ -176,6 +177,7 @@ function addUserProject(idData, leaderData, emails) {
                             $push: { // 프로젝트 정보 넣기
                                 user_projects: {
                                     _id: idData,
+                                    project_title: title,
                                     member_to_eval: memberData // 유저데이터넣기
                                 }
                             }
@@ -224,9 +226,9 @@ function updateProject(email, idData, data) {
                     _id: idData
                 }).then(project => {
                     if (project.project_leader.email != email) {
-                        reject(403);
+                        reject(403); // 수정하는사람이 팀장이 아닐경우
                     } else if (project.project_active != 1) {
-                        reject(400);
+                        reject(400); // 프로젝트가 진행중이 아닐 경우
                     }
                     else {
                         Project.updateOne(
@@ -236,13 +238,14 @@ function updateProject(email, idData, data) {
                                     'project_title': data.project_title,
                                     'project_leader.name': user.user_name,
                                     'project_leader.img': user.user_img,
-                                    'project_member': []
+                                    'project_updated_at': getCurrentDateTime(), // 수정시점 현재날짜시간
+                                    'project_member': [] // 기존 멤버 비우기
                                 }
                             }
                         ).then(() => {
                             UserData.updateMany(
                                 {
-                                    $pull: {
+                                    $pull: { // 기존 멤버들의 프로젝트 정보지우기
                                         'user_projects': { _id: idData }
                                     }
                                 }
@@ -359,7 +362,7 @@ router.get('/eval/:id', function (req, res, next) {
 router.post('/create', function (req, res, next) {
     createProject(req.user.user_email, req.body).then((data) => {
         addMemberInfo(data[1], data[2], req.user.user_email).then((projectData) => {// 프로젝트 멤버정보 채우는 함수
-            addUserProject(projectData[0], projectData[1], projectData[2]).then(() => {// 멤버별로 프로젝트정보 넣는 함수
+            addUserProject(projectData[0], projectData[1], projectData[2], projectData[3]).then(() => {// 멤버별로 프로젝트정보 넣는 함수
                 res.status(data[0]).send(data[0] + ": 프로젝트 생성 성공");
             })
         })
@@ -372,7 +375,7 @@ router.post('/create', function (req, res, next) {
 router.post('/update/:id', function (req, res, next) {
     updateProject(req.user.user_email, req.params.id, req.body).then((data) => {
         addMemberInfo(data[1], data[2], req.user.user_email).then((projectData) => {// 프로젝트 멤버정보 채우는 함수
-            addUserProject(projectData[0], projectData[1], projectData[2]).then(() => {// 멤버별로 프로젝트정보 넣는 함수
+            addUserProject(projectData[0], projectData[1], projectData[2], projectData[3]).then(() => {// 멤버별로 프로젝트정보 넣는 함수
                 res.status(data[0]).send(data[0] + ": 프로젝트 수정 성공");
             })
         })

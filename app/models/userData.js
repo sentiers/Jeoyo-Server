@@ -30,6 +30,7 @@ var userDataSchema = new Schema({
     }],
     user_projects: [{ // 진행중인 프로젝트
         _id: ObjectId, // 프로젝트 id
+        project_title: String, // 프로젝트 제목
         member_to_eval: [{
             id: ObjectId,
             email: String,

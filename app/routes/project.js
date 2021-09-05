@@ -216,9 +216,49 @@ function addUserProject(idData, leaderData, emails) {
 };
 
 //==== 프로젝트 수정하는 함수 =========================
-function updateProject(email, data) {
+function updateProject(email, idData, data) {
     return new Promise(function (resolve, reject) {
-
+        UserData.findOne({ user_email: email })
+            .then(user => {
+                Project.findOne({
+                    _id: idData
+                }).then(project => {
+                    if (project.project_leader.email != email) {
+                        reject(403);
+                    } else if (project.project_active != 1) {
+                        reject(400);
+                    }
+                    else {
+                        Project.updateOne(
+                            { _id: idData },
+                            {
+                                $set: {
+                                    'project_title': data.project_title,
+                                    'project_leader.name': user.user_name,
+                                    'project_leader.img': user.user_img,
+                                    'project_member': []
+                                }
+                            }
+                        ).then(() => {
+                            UserData.updateMany(
+                                {
+                                    $pull: {
+                                        'user_projects': { _id: idData }
+                                    }
+                                }
+                            ).then(() => {
+                                resolve([200, idData, data.user_email]);
+                            })
+                        }).catch(() => {
+                            reject(500);
+                        });
+                    }
+                }).catch((err) => {
+                    reject(404);
+                });
+            }).catch((err) => {
+                reject(401);
+            });
     });
 };
 
@@ -330,12 +370,15 @@ router.post('/create', function (req, res, next) {
 
 //==== 프로젝트 수정 =============================
 router.post('/update/:id', function (req, res, next) {
-    functionname()
-        .then((code) => {
-            res.status(code).send(code + ": 성공");
-        }).catch((errcode) => {
-            res.status(errcode).send(errcode + ": 실패");
-        });
+    updateProject(req.user.user_email, req.params.id, req.body).then((data) => {
+        addMemberInfo(data[1], data[2], req.user.user_email).then((projectData) => {// 프로젝트 멤버정보 채우는 함수
+            addUserProject(projectData[0], projectData[1], projectData[2]).then(() => {// 멤버별로 프로젝트정보 넣는 함수
+                res.status(data[0]).send(data[0] + ": 프로젝트 수정 성공");
+            })
+        })
+    }).catch((errcode) => {
+        res.status(errcode).send(errcode + ": 프로젝트 수정 실패");
+    });
 });
 
 //==== id와 일치하는 팀원 평가 =============================

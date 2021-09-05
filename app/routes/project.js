@@ -387,30 +387,46 @@ function updateProject(email, idData, data) {
 };
 
 //==== 팀원평가 함수 =========================
-function evaluateUser(email, idData, data) {
+function evaluateUser(email, idData, useridData, data) {
     return new Promise(function (resolve, reject) {
         UserData.findOne({
             user_email: email
         }).then((user) => {
-            UserData.updateOne(
-                { _id: idData },
-                {
-                    $set: {
-                        'user_evaluation.member_name': user.user_name, // 현재평가하는사람
-                        'user_evaluation.evaluation_date': getCurrentDate(), // 현재날짜
-                        'user_evaluation.project_title': data.project_title, // 프로젝트제목
-                        'user_evaluation.q1': data.user_evaluation.q1, // 유저평가
-                        'user_evaluation.q2': data.user_evaluation.q2,
-                        'user_evaluation.q3': data.user_evaluation.q3,
-                        'user_evaluation.q4': data.user_evaluation.q4,
-                        'user_evaluation.q5': data.user_evaluation.q5,
+            Project.findOne({
+                _id: idData
+            }).then((project) => {
+                UserData.updateOne(
+                    { _id: useridData },
+                    {
+                        $push: { // 평가 정보 넣기
+                            user_evaluation: {
+                                _id: project._id, // 프로젝트id
+                                project_title: project.project_title, // 프로젝트제목
+                                member_name: user.user_name, // 작성자이름
+                                evaluation_date: getCurrentDate(), // 현재날짜
+                                q1: data.q1,
+                                q2: data.q2,
+                                q3: data.q3,
+                                q4: data.q4,
+                                q5: data.q5
+                            }
+                        }
                     }
-                }
-            ).then(() => {
-                resolve(200);
+                ).then(() => {
+                    UserData.updateOne(
+                        { user_email: email },
+                        {
+                            $pull: { // 평가했으니까 평가해야하는 유저에서 뺌
+                                'user_projects.$[].member_to_eval': { _id: useridData }
+                            }
+                        }
+                    ).then(() => {
+                        resolve(200);
+                    })
+                })
             }).catch((err) => {
                 reject(404);
-            })
+            });
         }).catch((err) => {
             reject(401);
         });
@@ -507,12 +523,12 @@ router.post('/update/:id', function (req, res, next) {
 
 //==== id와 일치하는 팀원 평가 =============================
 router.post('/eval/:id/:userid', function (req, res, next) {
-    evaluateUser(req.user.user_email, req.params.id, req.body)
+    evaluateUser(req.user.user_email, req.params.id, req.params.userid, req.body)
         .then((code) => {
             res.status(code).send(code + ": 평가 성공");
         }).catch((errcode) => {
             res.status(errcode).send(errcode + ": 평가 실패");
-        }); s
+        });
 });
 
 // ----------------------------------------------------------------

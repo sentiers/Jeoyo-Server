@@ -4,6 +4,8 @@ var router = require('express').Router();
 
 //====테스팅 용도 =============================
 router.get('/', function (req, res, next) {
+
+    // ** 채팅기능 추가 필요
     res.send(req.user);
 });
 

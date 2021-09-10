@@ -83,6 +83,12 @@ router.get('/', function (req, res, next) {
         });
 });
 
+
+// ** 탐색기능 & 최근검색어
+router.get('/search', function (req, res, next) {
+
+});
+
 // ----------------------------------------------------------------
 
 module.exports = router;

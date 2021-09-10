@@ -1,4 +1,13 @@
-//https://fierce-mesa-76163.herokuapp.com/
+// --------------------------------------------
+// Hyunji Cho
+// Computer Engineering student
+// Dongguk University
+//
+// Heroku Link:
+// https://fierce-mesa-76163.herokuapp.com/
+//
+// Project Suspended: 2021 / 09 / 11
+// --------------------------------------------
 
 //==== DEPENDENCIES =========================================
 var express = require('express');
@@ -21,8 +30,12 @@ var project = require(__dirname + '/app/routes/project');
 
 //==== MONGOOOSE AND MONGODB ==================================
 var url = 'mongodb+srv://dbUser:2021JeoyoApp@jeoyocluster.evzle.mongodb.net/JeoyoDatabase?retryWrites=true&w=majority';
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false })
-  .then(() => console.log('MongoDB 연결...'))
+mongoose.connect(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false
+}).then(() => console.log('MongoDB 연결...'))
   .catch((err) => console.log(err));
 
 //==== CONFIGURATION OF EXPRESS AND PASSPORT =================

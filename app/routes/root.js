@@ -4,6 +4,7 @@ var router = require('express').Router();
 
 //====테스팅 용도 =============================
 router.get('/', function (req, res, next) {
+    // **수정 현재 유저 정보(id, 이메일, 이름만) 보내기
     res.send("환영합니다");
 });
 

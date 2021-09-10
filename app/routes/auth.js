@@ -249,12 +249,12 @@ router.post('/update', passport.authenticate('jwt', { session: false }), functio
     });
 });
 
-// 이메일인증*
+// ** 이메일인증 기능
 router.post('/email', function (req, res, next) {
 
 });
 
-// 비밀번호찾기*
+// ** 비밀번호찾기 기능
 router.post('/find', function (req, res, next) {
 
 });

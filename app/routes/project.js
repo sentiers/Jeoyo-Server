@@ -531,6 +531,18 @@ router.post('/eval/:id/:userid', function (req, res, next) {
         });
 });
 
+// ** 종료된 프로젝트 삭제 가능?
+router.get('/something1', function (req, res, next) {
+
+});
+
+
+// ** 프로젝트 강제종료 기능?
+router.get('/something2', function (req, res, next) {
+    // 팀원 평가가 다안된상태에서 종료 - 평가하기싫은사람도있을테니까
+    // terminateProject()
+});
+
 // ----------------------------------------------------------------
 
 module.exports = router;
